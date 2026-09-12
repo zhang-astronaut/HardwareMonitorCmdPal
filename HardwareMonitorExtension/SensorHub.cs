@@ -69,7 +69,7 @@ public sealed partial class SensorHub : IDisposable
                     Pinned.EnsureDefaults(snap.Sensors);
                 }
 
-                // 供浏览器看板读取的真实快照（live-data.js）
+                // live-data.js 仅在看板活跃时写入（见 LiveSnapshotWriter.IsDashboardActive）
                 LiveSnapshotWriter.Write(snap, History);
 
                 SnapshotUpdated?.Invoke(this, EventArgs.Empty);

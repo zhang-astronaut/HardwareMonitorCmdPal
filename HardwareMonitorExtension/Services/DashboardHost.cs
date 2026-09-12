@@ -52,6 +52,8 @@ public static class DashboardHost
     public static void OpenDashboard()
     {
         var path = EnsureDashboardFile();
+        // 打开后开启一段 live-data.js 写盘窗口；之后靠文件访问时间续期
+        LiveSnapshotWriter.NotifyDashboardOpen();
         var uri = new Uri(path).AbsoluteUri;
         try
         {
