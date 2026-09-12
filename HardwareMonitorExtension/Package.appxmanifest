@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap3 rescap">
+
+  <Identity
+    Name="HardwareMonitorExtension"
+    Publisher="CN=HardwareMonitor"
+    Version="0.1.0.0" />
+
+  <Properties>
+    <DisplayName>硬件监视器 (PawnIO)</DisplayName>
+    <PublisherDisplayName>HardwareMonitor</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.19041.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.19041.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$">
+      <uap:VisualElements
+        DisplayName="硬件监视器 (PawnIO)"
+        Description="通过 PawnIO / LibreHardwareMonitor 读取 CPU、GPU、硬盘温度与占用，固定到命令面板 Dock。"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="HardwareMonitorExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="硬件监视器 (PawnIO)">
+              <com:Class Id="3F8A2C91-6B4E-4D2A-9C17-8E5F0A7B4D63" DisplayName="硬件监视器 (PawnIO)" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Name="com.microsoft.commandpalette"
+            Id="HardwareMonitor"
+            PublicFolder="Public"
+            DisplayName="硬件监视器 (PawnIO)"
+            Description="PawnIO 硬件温度与占用监视，支持 Dock 固定与 Compact/Default 布局">
+            <uap3:Properties>
+              <CmdPalProvider>
+                <Activation>
+                  <CreateInstance ClassId="3F8A2C91-6B4E-4D2A-9C17-8E5F0A7B4D63" />
+                </Activation>
+                <SupportedInterfaces>
+                  <Commands />
+                </SupportedInterfaces>
+              </CmdPalProvider>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+
+PackageIdentifier: HardwareMonitor.CmdPalExtension
+PackageVersion: 0.1.0.0
+PackageLocale: zh-CN
+Publisher: HardwareMonitor
+PublisherUrl: https://github.com/your-org/HardwareMonitorExtension
+PackageName: 硬件监视器 (PawnIO) - PowerToys 命令面板扩展
+PackageUrl: https://github.com/your-org/HardwareMonitorExtension
+License: MIT
+ShortDescription: 通过 PawnIO 读取 CPU/GPU/硬盘温度与占用，固定到命令面板 Dock。
+Description: PowerToys Command Palette 扩展。使用 PawnIO 与 LibreHardwareMonitor 读取硬件传感器，支持 Compact/Default 布局、定期刷新、高温预警与温度历史。
+Moniker: cmdpal-hardware-monitor
+Tags:
+- windows-commandpalette-extension
+- powertoys
+- command-palette
+- hardware
+- temperature
+- pawnio
+- monitor
+ReleaseNotesUrl: https://github.com/your-org/HardwareMonitorExtension/releases
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

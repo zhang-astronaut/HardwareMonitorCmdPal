@@ -1,0 +1,8 @@
+﻿bin/
+obj/
+AppPackages/
+*.user
+.vs/
+*.pfx
+setup-x64.iss
+setup-arm64.iss

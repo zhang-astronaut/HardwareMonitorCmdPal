@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hardware Monitor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div>
+        <h1>Hardware Monitor</h1>
+        <p class="meta" id="metaLine">实时采样 · 准备中…</p>
+      </div>
+      <div class="top-actions">
+        <div class="seg" id="sizeSeg">
+          <button type="button" data-size="compact">Compact</button>
+          <button type="button" data-size="default" class="active">Default</button>
+        </div>
+        <button type="button" class="btn" id="stressBtn">压测</button>
+        <button type="button" class="btn" id="pauseBtn">暂停</button>
+      </div>
+    </header>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="stage">
+      <aside class="panel">
+        <div class="panel-h">
+          <h2>命令面板 · Dock</h2>
+          <span id="dockMode">Default</span>
+        </div>
+        <div class="dock-wrap">
+          <div class="dock" id="dock"></div>
+        </div>
+        <div class="panel-h" style="margin-top:8px">
+          <h2>全部读数</h2>
+          <span id="listCount">0</span>
+        </div>
+        <div class="list" id="sensorList"></div>
+      </aside>
+
+      <main class="panel">
+        <div class="panel-h">
+          <h2 id="chartTitle">CPU 封装</h2>
+          <span id="chartStats">—</span>
+        </div>
+        <div class="chart-block">
+          <canvas id="mainChart" width="720" height="240"></canvas>
+        </div>
+        <div class="legend" id="chartLegend"></div>
+
+        <div class="grid-2" id="miniGrid">
+          <article class="mini">
+            <header><h3>CPU</h3><span id="cpuNow">—</span></header>
+            <canvas id="cpuMini" width="360" height="110"></canvas>
+            <div class="rows" id="cpuRows"></div>
+          </article>
+          <article class="mini">
+            <header><h3>GPU</h3><span id="gpuNow">—</span></header>
+            <canvas id="gpuMini" width="360" height="110"></canvas>
+            <div class="rows" id="gpuRows"></div>
+          </article>
+          <article class="mini">
+            <header><h3>存储</h3><span id="diskNow">—</span></header>
+            <canvas id="diskMini" width="360" height="110"></canvas>
+            <div class="rows" id="diskRows"></div>
+          </article>
+          <article class="mini">
+            <header><h3>主板 / 风扇 / 内存</h3><span id="miscNow">—</span></header>
+            <canvas id="miscMini" width="360" height="110"></canvas>
+            <div class="rows" id="miscRows"></div>
+          </article>
+        </div>
+      </main>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="panel-h">
+        <h2>明细表</h2>
+        <span id="tableFilterNote">点击行可切换主图</span>
+      </div>
+      <div class="table-wrap">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th>指标</th><th>分组</th><th>类型</th><th>当前值</th><th>来源</th><th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <script src="live-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
