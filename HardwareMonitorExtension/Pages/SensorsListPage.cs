@@ -116,18 +116,30 @@ internal sealed partial class SensorsListPage : ListPage
         if (!compact)
             return sensors;
 
-        // Compact：每组温度+占用+功率
+        // Compact：每组温度尽量 3 条 + 负载 + 功率；绝不丢掉 CPU 温度
         var result = new List<SensorReading>();
-        foreach (var g in new[] { "处理器", "显卡", "存储", "主板", "内存" })
+        foreach (var g in new[] { "处理器", "显卡", "存储", "主板", "内存", "电池", "网络", "其他" })
         {
-            result.AddRange(sensors.Where(s => s.Group == g && s.Kind == SensorKind.Temperature).Take(2));
+            var temps = sensors.Where(s => s.Group == g && s.Kind == SensorKind.Temperature).ToList();
+            result.AddRange(temps.Count <= 3 ? temps : temps.Take(3));
             var load = sensors.FirstOrDefault(s => s.Group == g && s.Kind == SensorKind.Load);
             if (load is not null) result.Add(load);
             var power = sensors.FirstOrDefault(s => s.Group == g && s.Kind == SensorKind.Power);
             if (power is not null) result.Add(power);
         }
 
-        return result.Count > 0 ? result : sensors.Take(12);
+        // 若过滤后没有处理器温度，退回包含全部处理器温度
+        if (!result.Any(s => s.Group == "处理器" && s.Kind == SensorKind.Temperature))
+            result.InsertRange(0, sensors.Where(s => s.Group == "处理器" && s.Kind == SensorKind.Temperature));
+
+        // 其它分组漏网项：附加 Other/风扇等，避免丢指标
+        foreach (var s in sensors)
+        {
+            if (!result.Exists(r => r.Id == s.Id))
+                result.Add(s);
+        }
+
+        return result.Count > 0 ? result : sensors;
     }
 
     private ListItem GetOrCreateItem(string id)

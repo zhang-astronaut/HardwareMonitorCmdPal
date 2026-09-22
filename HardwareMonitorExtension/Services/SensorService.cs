@@ -140,13 +140,8 @@ public sealed partial class SensorService : IDisposable
     {
         foreach (var r in readings)
         {
-            if (r.Kind is SensorKind.Temperature or SensorKind.Load or SensorKind.Power
-                or SensorKind.Fan or SensorKind.Clock or SensorKind.Voltage
-                or SensorKind.Data or SensorKind.Level or SensorKind.Control
-                or SensorKind.Energy or SensorKind.Noise or SensorKind.Flow)
-            {
+            if (double.IsFinite(r.Value))
                 History.Push(r.Id, DateTimeOffset.UtcNow, r.Value);
-            }
         }
     }
 
@@ -171,10 +166,9 @@ public sealed partial class SensorService : IDisposable
                 if (float.IsNaN(v) || float.IsInfinity(v)) continue;
 
                 var kind = MapKind(sensor.SensorType);
-                // 保留 LHM 全部有效传感器类型（温度/负载/功率/风扇/频率/电压/液位/流量…）
-                if (kind == SensorKind.Other)
+                // 保留全部有限读数（含 Other）；温度仅丢弃明显非法值
+                if (kind == SensorKind.Temperature && (v < -50 || v > 200))
                     continue;
-                if (kind == SensorKind.Temperature && (v <= 0 || v >= 150)) continue;
 
                 var group = MapGroup(hardware);
                 var shortLabel = ShortLabel(hardware, sensor);

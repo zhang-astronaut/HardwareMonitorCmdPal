@@ -110,7 +110,7 @@ public sealed record SensorSnapshot(
     public SensorReading? Find(string id) => Sensors.FirstOrDefault(s => s.Id == id);
 
     public double PeakTemperatureC =>
-        Sensors.Where(s => s.Kind == SensorKind.Temperature && s.Value is > 0 and < 150)
+        Sensors.Where(s => s.Kind == SensorKind.Temperature && s.Value is > -50 and < 200)
                .Select(s => s.Value)
                .DefaultIfEmpty(0)
                .Max();
