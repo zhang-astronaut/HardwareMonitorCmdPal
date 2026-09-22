@@ -404,7 +404,7 @@ public sealed partial class SensorService : IDisposable
             {
                 var raw = Convert.ToDouble(obj["CurrentTemperature"]);
                 var c = raw / 10.0 - 273.15;
-                if (c is < 0 or > 150) continue;
+                if (c is < -50 or > 200) continue;
                 var name = obj["InstanceName"]?.ToString() ?? "ACPI";
                 list.Add(new SensorReading(
                     $"acpi:{name}",
