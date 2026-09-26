@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -11,10 +11,10 @@
   <Identity
     Name="HardwareMonitorExtension"
     Publisher="CN=HardwareMonitor"
-    Version="0.1.0.0" />
+    Version="0.1.2.0" />
 
   <Properties>
-    <DisplayName>硬件监视器 (PawnIO)</DisplayName>
+    <DisplayName>纭欢鐩戣鍣?(PawnIO)</DisplayName>
     <PublisherDisplayName>HardwareMonitor</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -33,8 +33,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="硬件监视器 (PawnIO)"
-        Description="通过 PawnIO / LibreHardwareMonitor 读取 CPU、GPU、硬盘温度与占用，固定到命令面板 Dock。"
+        DisplayName="纭欢鐩戣鍣?(PawnIO)"
+        Description="閫氳繃 PawnIO / LibreHardwareMonitor 璇诲彇 CPU銆丟PU銆佺‖鐩樻俯搴︿笌鍗犵敤锛屽浐瀹氬埌鍛戒护闈㈡澘 Dock銆?
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">
@@ -44,8 +44,8 @@
       <Extensions>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="HardwareMonitorExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="硬件监视器 (PawnIO)">
-              <com:Class Id="3F8A2C91-6B4E-4D2A-9C17-8E5F0A7B4D63" DisplayName="硬件监视器 (PawnIO)" />
+            <com:ExeServer Executable="HardwareMonitorExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="纭欢鐩戣鍣?(PawnIO)">
+              <com:Class Id="3F8A2C91-6B4E-4D2A-9C17-8E5F0A7B4D63" DisplayName="纭欢鐩戣鍣?(PawnIO)" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
@@ -53,8 +53,8 @@
           <uap3:AppExtension Name="com.microsoft.commandpalette"
             Id="HardwareMonitor"
             PublicFolder="Public"
-            DisplayName="硬件监视器 (PawnIO)"
-            Description="PawnIO 硬件温度与占用监视，支持 Dock 固定与 Compact/Default 布局">
+            DisplayName="纭欢鐩戣鍣?(PawnIO)"
+            Description="PawnIO 纭欢娓╁害涓庡崰鐢ㄧ洃瑙嗭紝鏀寔 Dock 鍥哄畾涓?Compact/Default 甯冨眬">
             <uap3:Properties>
               <CmdPalProvider>
                 <Activation>
@@ -76,3 +76,4 @@
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>
+

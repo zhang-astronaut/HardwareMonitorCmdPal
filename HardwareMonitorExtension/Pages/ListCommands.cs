@@ -61,3 +61,19 @@ internal sealed partial class OpenDashboardCommand : InvokableCommand
         return CommandResult.KeepOpen();
     }
 }
+
+/// <summary>安装登录计划任务：之后开机自动采样，无需再点 UAC。</summary>
+internal sealed partial class StartElevatedTempHelperCommand : InvokableCommand
+{
+    public StartElevatedTempHelperCommand()
+    {
+        Name = "安装 CPU 温度开机采样（一次）";
+        Icon = new IconInfo("🔐");
+    }
+
+    public override CommandResult Invoke()
+    {
+        ElevatedTempHelper.EnsureAutoStart();
+        return CommandResult.KeepOpen();
+    }
+}

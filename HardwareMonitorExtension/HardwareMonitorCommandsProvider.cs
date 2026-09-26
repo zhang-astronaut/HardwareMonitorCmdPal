@@ -2,7 +2,6 @@
 
 using HardwareMonitorExtension.Dock;
 using HardwareMonitorExtension.Pages;
-using HardwareMonitorExtension.Services;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -49,6 +48,12 @@ public partial class HardwareMonitorCommandsProvider : CommandProvider
                 Title = "实时图表看板",
                 Subtitle = "btop 风格离线 index.html",
                 Icon = new IconInfo("🌐"),
+            },
+            new CommandItem(new StartElevatedTempHelperCommand())
+            {
+                Title = "安装 CPU 温度开机采样（一次）",
+                Subtitle = "注册后开机自动，无需再点；普通权限 CPU Tctl 为 0",
+                Icon = new IconInfo("🔐"),
             },
         ];
 

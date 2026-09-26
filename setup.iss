@@ -1,5 +1,5 @@
 ﻿; Inno Setup 鈥?Command Palette extension (WinGet EXE)
-#define AppVersion "0.1.1.0"
+#define AppVersion "0.1.2.0"
 #define ExtensionName "HardwareMonitorExtension"
 #define DisplayName "Hardware Monitor (PawnIO)"
 #define DeveloperName "zhang-astronaut"
@@ -29,4 +29,5 @@ Name: "{group}\{#DisplayName}"; Filename: "{app}\{#ExtensionName}.exe"
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Classes\CLSID\{{3F8A2C91-6B4E-4D2A-9C17-8E5F0A7B4D63}}"; ValueData: "{#DisplayName}"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "SOFTWARE\Classes\CLSID\{{3F8A2C91-6B4E-4D2A-9C17-8E5F0A7B4D63}}\LocalServer32"; ValueData: """{app}\{#ExtensionName}.exe"" -RegisterProcessAsComServer"; Flags: uninsdeletekey
+
 

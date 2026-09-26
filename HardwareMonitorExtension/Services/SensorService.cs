@@ -212,8 +212,54 @@ public sealed partial class SensorService : IDisposable
 
         // CPU 功率：驱动未提供或长期为 0 时，用 load×TDP 模型估算，避免界面一直 0W
         FixupCpuPower(list);
+        // CPU 温度：LHM/PawnIO 普通权限为 0 时，合并登录任务助手写入的真实 Tctl
+        MergeElevatedCpuTemp(list);
+        // 首次发现 CPU 温度无效时，提示可用一次安装命令（不自动弹 UAC）
+        try
+        {
+            if (list.Any(s => s.Kind == SensorKind.Temperature && s.Group == "处理器" && s.Value < 1)
+                && !ElevatedTempHelper.IsTaskInstalled())
+            {
+                // no-op marker for UI footer; actual UX is the top-level command
+            }
+        }
+        catch { }
 
         return Sort(list);
+    }
+
+    private static void MergeElevatedCpuTemp(List<SensorReading> list)
+    {
+        var elevated = ElevatedTempHelper.TryReadCpuTemperature();
+        if (elevated is null or < 1) return;
+
+        var idx = list.FindIndex(s =>
+            s.Kind == SensorKind.Temperature &&
+            (s.Group == "处理器" || s.Name.Contains("Tctl", StringComparison.OrdinalIgnoreCase) ||
+             s.Name.Contains("Tdie", StringComparison.OrdinalIgnoreCase)));
+
+        if (idx >= 0)
+        {
+            list[idx] = list[idx] with
+            {
+                Value = elevated.Value,
+                Source = list[idx].Source + " · admin-helper",
+            };
+        }
+        else
+        {
+            list.Add(new SensorReading(
+                "helper:cpu-tctl",
+                "处理器",
+                "CPU 封装温度 (Tctl)",
+                "Elevated helper · LHM",
+                SensorKind.Temperature,
+                elevated.Value,
+                "°C",
+                "CPU",
+                "CPU 封装",
+                null));
+        }
     }
 
     private static void FixupCpuPower(List<SensorReading> list)
