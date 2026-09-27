@@ -16,8 +16,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>0.1.2.0</Version>
-    <AppxPackageVersion>0.1.2.0</AppxPackageVersion>
+    <Version>0.1.4.0</Version>
+    <AppxPackageVersion>0.1.4.0</AppxPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -89,6 +89,7 @@
     <EnableAotAnalyzer>false</EnableAotAnalyzer>
   </PropertyGroup>
 </Project>
+
 
 
 
