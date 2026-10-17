@@ -1,3 +1,4 @@
+using HardwareMonitorExtension.Localization;
 // Copyright (c) HardwareMonitor. MIT license.
 
 using HardwareMonitorExtension.Services;
@@ -29,9 +30,9 @@ internal sealed partial class SensorsListPage : ListPage
         _settings = settings;
         _compact = settings.CompactByDefault;
         Icon = new IconInfo("🌡");
-        Title = "硬件监视器";
-        Name = "打开";
-        PlaceholderText = "筛选传感器…";
+        Title = Text.Get("AppName");
+        Name = Text.Get("Open");
+        PlaceholderText = Text.Get("FilterSensors");
         EnsureHubHook();
     }
 
@@ -161,8 +162,8 @@ internal sealed partial class SensorsListPage : ListPage
         // 数值 Title（短）+ 名称 Subtitle，长 Identifier 不会挤掉读数
         item.Title = sensor.FormatListTitle();
         item.Subtitle = stale
-            ? $"{sensor.ShortLabel} · {sensor.Name} · 可能过期"
-            : $"{sensor.ShortLabel} · {sensor.Name}";
+            ? Text.Format("StaleSubtitle", Text.DisplayLabel(sensor.ShortLabel), Text.DisplayName(sensor.Name))
+            : $"{Text.DisplayLabel(sensor.ShortLabel)} · {Text.DisplayName(sensor.Name)}";
 
         var nextIcon = IconKey(sensor);
         if (_lastTitle.TryGetValue(sensor.Id, out var prev) && prev == nextIcon)
@@ -204,12 +205,12 @@ internal sealed partial class SensorsListPage : ListPage
         [
             new CommandContextItem(new TogglePinSensorCommand(_hub, sensorId))
             {
-                Title = "固定到快捷栏 / 取消固定",
+                Title = Text.Get("TogglePin"),
                 Icon = new IconInfo("📌"),
             },
             new CommandContextItem(new SensorChartPage(_hub, sensorId))
             {
-                Title = "查看趋势图",
+                Title = Text.Get("ViewTrend"),
                 Icon = new IconInfo("📈"),
             },
         ];
@@ -222,7 +223,7 @@ internal sealed partial class SensorsListPage : ListPage
         var pinCount = _hub.Pinned?.Ids.Count ?? 0;
         var tempCount = snap.Sensors.Count(s => s.Kind == SensorKind.Temperature);
 
-        _footerItem.Title = $"{snap.Sensors.Count} 项 · 温度 {tempCount} · 已固定 {pinCount} · 峰值 {Math.Round(peak)}°C{ThresholdPolicy.Marker(level)}";
+        _footerItem.Title = Text.Format("ListFooter", snap.Sensors.Count, tempCount, pinCount, Math.Round(peak), ThresholdPolicy.Marker(level));
         _footerItem.Subtitle = $"{_hub.BackendLabel} · {snap.Timestamp:HH:mm:ss}";
         _footerItem.Icon = new IconInfo("↻");
     }

@@ -1,3 +1,4 @@
+using HardwareMonitorExtension.Localization;
 // Copyright (c) HardwareMonitor. MIT license.
 
 using HardwareMonitorExtension.Pages;
@@ -20,7 +21,7 @@ public sealed partial class PinnedSensorsDockBand : WrappedDockItem, IDisposable
     private bool _hooked;
 
     public PinnedSensorsDockBand(SensorHub hub)
-        : base([], "hardwaremonitor.pinned_band", "硬件读数")
+        : base([], "hardwaremonitor.pinned_band", Text.Get("DockTitle"))
     {
         _hub = hub;
         Icon = new IconInfo("🌡");
@@ -79,14 +80,14 @@ public sealed partial class PinnedSensorsDockBand : WrappedDockItem, IDisposable
         if (sensor is null)
         {
             item.Title = "--";
-            item.Subtitle = "暂无数据";
+            item.Subtitle = Text.Get("NoData");
             item.Icon = new IconInfo("🌡");
             return;
         }
 
         // 数值在 Title（短、右对齐友好）；名称在 Subtitle（Dock Compact 会隐藏）
         item.Title = sensor.FormatDockTitle(_hub.MergeLoadInDock);
-        item.Subtitle = $"{sensor.ShortLabel} · {sensor.Name}";
+        item.Subtitle = $"{Text.DisplayLabel(sensor.ShortLabel)} · {Text.DisplayName(sensor.Name)}";
         item.Icon = IconFor(sensor);
     }
 

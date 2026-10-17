@@ -1,3 +1,4 @@
+using HardwareMonitorExtension.Localization;
 // Copyright (c) HardwareMonitor. MIT license.
 
 using System.Diagnostics;
@@ -16,7 +17,7 @@ public sealed partial class SensorService : IDisposable
     private readonly SemaphoreSlim _gate = new(1, 1);
     private bool _lhmReady;
     private Computer? _computer;
-    private string _backendLabel = "初始化中";
+    private string _backendLabel = Text.Get("Initializing");
     private bool _disposed;
     private int _sampleFailures;
 
@@ -42,10 +43,10 @@ public sealed partial class SensorService : IDisposable
     {
         var pawn = PawnIoLocator.FindInstallDirectory();
         if (!lhm)
-            return pawn is null ? "LHM 打开失败 · 无 PawnIO" : "LHM 打开失败 · PawnIO 已安装";
+            return pawn is null ? Text.Get("BackendFailedNoPawn") : Text.Get("BackendFailedPawn");
         return pawn is null
-            ? "LibreHardwareMonitor（无 PawnIO）"
-            : "LibreHardwareMonitor + PawnIO 已安装";
+            ? Text.Get("BackendNoPawn")
+            : Text.Get("BackendPawn");
     }
 
     private bool TryOpenLibreHardwareMonitor()

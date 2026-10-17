@@ -1,7 +1,10 @@
 // Copyright (c) HardwareMonitor. MIT license.
 
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Net;
+using HardwareMonitorExtension.Localization;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
 namespace HardwareMonitorExtension.Services;
@@ -28,7 +31,7 @@ public static class DashboardHost
             try
             {
                 File.Copy(packaged, dest, overwrite: true);
-                foreach (var extra in new[] { "styles.css", "app.js", "live-data.js" })
+                foreach (var extra in new[] { "styles.css", "i18n-data.js", "i18n.js", "app.js", "live-data.js" })
                 {
                     var src = Path.Combine(assets, extra);
                     if (File.Exists(src))
@@ -54,7 +57,7 @@ public static class DashboardHost
         var path = EnsureDashboardFile();
         // 打开后开启一段 live-data.js 写盘窗口；之后靠文件访问时间续期
         LiveSnapshotWriter.NotifyDashboardOpen();
-        var uri = new Uri(path).AbsoluteUri;
+        var uri = DashboardUri(path);
         try
         {
             Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
@@ -72,17 +75,20 @@ public static class DashboardHost
     public static OpenUrlCommand CreateOpenCommand()
     {
         var path = EnsureDashboardFile();
-        return new OpenUrlCommand(new Uri(path).AbsoluteUri);
+        return new OpenUrlCommand(DashboardUri(path));
     }
 
-    private const string FallbackHtml =
-        """
+    private static string DashboardUri(string path) =>
+        new Uri(path).AbsoluteUri + "?lang=" + Uri.EscapeDataString(CultureInfo.CurrentUICulture.Name);
+
+    private static string FallbackHtml =>
+        $$"""
         <!DOCTYPE html>
-        <html lang="zh-CN"><head><meta charset="utf-8"><title>Hardware Monitor</title>
+        <html lang="{{WebUtility.HtmlEncode(CultureInfo.CurrentUICulture.Name)}}"><head><meta charset="utf-8"><title>{{WebUtility.HtmlEncode(Text.Get("AppName"))}}</title>
         <style>body{font:14px/1.5 Segoe UI,sans-serif;background:#0b0d10;color:#e8eef7;padding:24px}
         </style></head><body>
-        <h1>Hardware Monitor</h1>
-        <p>完整看板未随包释放，请将项目中的 <code>index.html</code> 复制到本目录。</p>
+        <h1>{{WebUtility.HtmlEncode(Text.Get("AppName"))}}</h1>
+        <p>{{WebUtility.HtmlEncode(Text.Get("DashboardUnavailable"))}}</p>
         </body></html>
         """;
 }

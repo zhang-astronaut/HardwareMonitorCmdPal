@@ -4,6 +4,13 @@
 (() => {
   "use strict";
 
+  const L = window.HardwareMonitorI18n;
+  const t = L.t;
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[character]);
+  L.apply();
+
   const N = 90;
   const TH = { warm: 70, hot: 80, crit: 90 };
   const COLORS = {
@@ -73,7 +80,7 @@
 
   function shortOf(s) {
     if (s.short) return s.short;
-    const n = s.name || s.id || "读数";
+    const n = s.name || s.id || t("Reading");
     return n.length > 10 ? n.slice(0, 10) : n;
   }
 
@@ -128,8 +135,8 @@
       if (applyLive()) render();
       // 若扩展停止写入超过 8s，标记为过期但仍显示最后快照
       if (state.live && Date.now() - state.lastLiveTs > 8000) {
-        $("metaLine").textContent = "真实数据已停更（请保持扩展运行）· 最后 " +
-          (state.last ? state.last.toLocaleTimeString("zh-CN", { hour12: false }) : "—");
+        $("metaLine").textContent = t("LiveStopped",
+          state.last ? state.last.toLocaleTimeString(L.locale, { hour12: false }) : "—");
       }
     };
     tag.onerror = () => { /* 无真实文件，继续演示 */ };
@@ -306,10 +313,10 @@
     const color = s.kind === "temperature" ? COLORS.cpu : s.kind === "power" ? COLORS.power : COLORS.load;
     const forced = stickyRange(s.id, s.history);
     drawSeries(g.ctx, s.history, color, g.w, g.h, 8, forced);
-    $("chartTitle").textContent = s.name;
+    $("chartTitle").textContent = L.name(s.name);
     const mn = Math.min(...s.history), mx = Math.max(...s.history);
-    $("chartStats").textContent = `${fmt(s)} · ${mn.toFixed(0)}–${mx.toFixed(0)} · ${s.history.length} 点`;
-    $("chartLegend").innerHTML = `<span><i style="background:${color}"></i>${s.short}</span><span>${s.source}</span>`;
+    $("chartStats").textContent = t("WebChartStats", fmt(s), mn.toFixed(0), mx.toFixed(0), s.history.length);
+    $("chartLegend").innerHTML = `<span><i style="background:${escapeHtml(color)}"></i>${escapeHtml(L.label(s.short))}</span><span>${escapeHtml(L.name(s.source))}</span>`;
   }
 
   function drawMini(canvasId, ids) {
@@ -325,12 +332,12 @@
 
   function rowHtml(s) {
     const lv = s.kind === "temperature" ? heat(s.value) : "";
-    return `<div class="row ${lv} ${s.id === state.selected ? "sel" : ""}" data-id="${s.id}">
+    return `<div class="row ${escapeHtml(lv)} ${escapeHtml(s.id === state.selected ? "sel" : "")}" data-id="${escapeHtml(s.id)}">
       <div>
-        <div class="name">${s.short}</div>
-        <div class="sub">${s.group} · ${s.source}</div>
+        <div class="name">${escapeHtml(L.label(s.short))}</div>
+        <div class="sub">${escapeHtml(L.group(s.group))} · ${escapeHtml(L.name(s.source))}</div>
       </div>
-      <div class="val">${fmt(s)}</div>
+      <div class="val">${escapeHtml(fmt(s))}</div>
     </div>`;
   }
 
@@ -350,24 +357,24 @@
     const mem = pick("mem-load") || pickByGroup("内存", "load")[0];
 
     const kpis = [
-      ["CPU 温", cpuT, COLORS.cpu],
-      ["CPU 功率", cpuP, COLORS.power],
-      ["CPU 占用", cpuL, COLORS.load],
-      ["GPU 温", gpuT, COLORS.gpu],
-      ["SSD 温", diskT, COLORS.disk],
-      ["风扇", fan, COLORS.fan],
-      ["主板", mb, COLORS.board],
-      ["内存", mem, COLORS.mem],
+      [t("CpuTempShort"), cpuT, COLORS.cpu],
+      [t("CpuPowerShort"), cpuP, COLORS.power],
+      [t("CpuLoadShort"), cpuL, COLORS.load],
+      [t("GpuTempShort"), gpuT, COLORS.gpu],
+      [t("SsdTempShort"), diskT, COLORS.disk],
+      [t("Fan"), fan, COLORS.fan],
+      [t("GroupBoard"), mb, COLORS.board],
+      [t("GroupMemory"), mem, COLORS.mem],
     ];
     $("kpis").innerHTML = kpis.map(([label, s, c]) =>
-      `<div class="kpi"><b style="color:${c}">${s ? fmt(s) : "—"}</b><small>${label}</small></div>`
+      `<div class="kpi"><b style="color:${escapeHtml(c)}">${escapeHtml(s ? fmt(s) : "—")}</b><small>${escapeHtml(label)}</small></div>`
     ).join("");
 
-    const mode = state.live ? "真实数据 · PawnIO/LHM" : "演示数据（未检测到 live-data.js）";
-    $("metaLine").textContent = (state.last ? `更新 ${state.last.toLocaleTimeString("zh-CN", { hour12: false })} · ` : "") +
-      `${state.sensors.length} 项 · ${mode}${state.paused ? " · 已暂停" : ""}`;
+    const mode = t(state.live ? "LiveMode" : "DemoMode");
+    $("metaLine").textContent = (state.last ? t("UpdatedAt", state.last.toLocaleTimeString(L.locale, { hour12: false })) : "") +
+      t("WebMeta", state.sensors.length, mode, state.paused ? t("PausedSuffix") : "");
     $("listCount").textContent = String(state.sensors.length);
-    $("dockMode").textContent = state.compact ? "Compact" : "Default";
+    $("dockMode").textContent = t(state.compact ? "Compact" : "Default");
 
     const pinIds = state.pinned.filter((id) => state.sensors.some((s) => s.id === id));
     if (pinIds.length === 0) pinIds.push(...state.sensors.filter((s) => s.kind === "temperature").slice(0, 6).map((s) => s.id));
@@ -378,9 +385,9 @@
       .filter(Boolean)
       .map((s) => {
         const lv = s.kind === "temperature" ? heat(s.value) : "";
-        return `<div class="band ${lv} ${s.id === state.selected ? "sel" : ""}" data-id="${s.id}">
-          <div class="n">${s.short}</div>
-          <div class="v">${fmt(s)}</div>
+        return `<div class="band ${escapeHtml(lv)} ${escapeHtml(s.id === state.selected ? "sel" : "")}" data-id="${escapeHtml(s.id)}">
+          <div class="n">${escapeHtml(L.label(s.short))}</div>
+          <div class="v">${escapeHtml(fmt(s))}</div>
         </div>`;
       }).join("");
 
@@ -397,7 +404,7 @@
 
     const fillRows = (elId, items) => {
       $(elId).innerHTML = items.filter(Boolean).map((s) =>
-        `<div class="r"><span>${s.short}</span><span>${fmt(s)}</span></div>`
+        `<div class="r"><span>${escapeHtml(L.label(s.short))}</span><span>${escapeHtml(fmt(s))}</span></div>`
       ).join("");
     };
 
@@ -429,13 +436,13 @@
 
     $("dataTable").querySelector("tbody").innerHTML = state.sensors.map((s) => {
       const pinned = state.pinned.includes(s.id);
-      return `<tr data-id="${s.id}">
-        <td>${s.name}</td>
-        <td>${s.group}</td>
-        <td>${s.kind}</td>
-        <td class="mono">${fmt(s)}</td>
-        <td style="color:var(--muted);font-size:11px">${s.source}</td>
-        <td><button type="button" class="pin ${pinned ? "on" : ""}" data-pin="${s.id}">${pinned ? "已固定" : "固定"}</button></td>
+      return `<tr data-id="${escapeHtml(s.id)}">
+        <td>${escapeHtml(L.name(s.name))}</td>
+        <td>${escapeHtml(L.group(s.group))}</td>
+        <td>${escapeHtml(L.kind(s.kind))}</td>
+        <td class="mono">${escapeHtml(fmt(s))}</td>
+        <td style="color:var(--muted);font-size:11px">${escapeHtml(L.name(s.source))}</td>
+        <td><button type="button" class="pin ${escapeHtml(pinned ? "on" : "")}" data-pin="${escapeHtml(s.id)}">${escapeHtml(t(pinned ? "Pinned" : "Pin"))}</button></td>
       </tr>`;
     }).join("");
   }
@@ -465,7 +472,7 @@
   $("pauseBtn").addEventListener("click", () => {
     state.paused = !state.paused;
     $("pauseBtn").classList.toggle("on", state.paused);
-    $("pauseBtn").textContent = state.paused ? "恢复" : "暂停";
+    $("pauseBtn").textContent = t(state.paused ? "Resume" : "Pause");
     render();
   });
   $("sensorList").addEventListener("click", (e) => {

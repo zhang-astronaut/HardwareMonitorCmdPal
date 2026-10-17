@@ -1,3 +1,4 @@
+using HardwareMonitorExtension.Localization;
 // Copyright (c) HardwareMonitor. MIT license.
 
 using HardwareMonitorExtension.Dock;
@@ -20,7 +21,7 @@ public partial class HardwareMonitorCommandsProvider : CommandProvider
 
     public HardwareMonitorCommandsProvider()
     {
-        DisplayName = "硬件监视器";
+        DisplayName = Text.Get("AppName");
         Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
         _settingsManager = new HardwareMonitorSettingsManager(_hub);
         _hub.ConfigurePins(HardwareMonitorSettingsManager.PinsJsonPath());
@@ -32,11 +33,11 @@ public partial class HardwareMonitorCommandsProvider : CommandProvider
             new CommandItem(listPage)
             {
                 Title = DisplayName,
-                Subtitle = "全部传感器 · 可固定到快捷栏",
+                Subtitle = Text.Get("AllSensorsSubtitle"),
                 MoreCommands = [
                     new CommandContextItem(new OpenDashboardCommand())
                     {
-                        Title = "打开实时图表看板",
+                        Title = Text.Get("OpenDashboard"),
                         Icon = new IconInfo("🌐"),
                     },
                     new CommandContextItem(new ToggleCompactCommand(listPage)),
@@ -45,14 +46,14 @@ public partial class HardwareMonitorCommandsProvider : CommandProvider
             },
             new CommandItem(new OpenDashboardCommand())
             {
-                Title = "实时图表看板",
-                Subtitle = "btop 风格离线 index.html",
+                Title = Text.Get("DashboardTitle"),
+                Subtitle = Text.Get("DashboardSubtitle"),
                 Icon = new IconInfo("🌐"),
             },
             new CommandItem(new StartElevatedTempHelperCommand())
             {
-                Title = "安装 CPU 温度开机采样（一次）",
-                Subtitle = "注册后开机自动，无需再点；普通权限 CPU Tctl 为 0",
+                Title = Text.Get("InstallHelper"),
+                Subtitle = Text.Get("InstallHelperSubtitle"),
                 Icon = new IconInfo("🔐"),
             },
         ];

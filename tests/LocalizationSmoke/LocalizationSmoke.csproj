@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>HardwareMonitorExtension</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../HardwareMonitorExtension/Localization/Text.cs" Link="Localization/Text.cs" />
+    <EmbeddedResource Include="../../HardwareMonitorExtension/Localization/Strings*.resx" Link="Localization/%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

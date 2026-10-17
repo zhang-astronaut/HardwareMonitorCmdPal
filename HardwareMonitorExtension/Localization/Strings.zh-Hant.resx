@@ -1,0 +1,476 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="AppName">
+    <value>硬體監視器</value>
+  </data>
+  <data xml:space="preserve" name="AllSensorsSubtitle">
+    <value>全部感測器 · 可釘選至 Dock</value>
+  </data>
+  <data xml:space="preserve" name="OpenDashboard">
+    <value>開啟即時圖表儀表板</value>
+  </data>
+  <data xml:space="preserve" name="DashboardTitle">
+    <value>即時圖表儀表板</value>
+  </data>
+  <data xml:space="preserve" name="DashboardSubtitle">
+    <value>離線儀表板 · btop 風格</value>
+  </data>
+  <data xml:space="preserve" name="InstallHelper">
+    <value>安裝 CPU 溫度開機取樣（一次）</value>
+  </data>
+  <data xml:space="preserve" name="InstallHelperSubtitle">
+    <value>設定後開機自動取樣；CPU Tctl 需要系統權限</value>
+  </data>
+  <data xml:space="preserve" name="RefreshTitle">
+    <value>頁面更新間隔（毫秒）</value>
+  </data>
+  <data xml:space="preserve" name="RefreshDescription">
+    <value>500–3000；頁面顯示時生效</value>
+  </data>
+  <data xml:space="preserve" name="HotTitle">
+    <value>過熱臨界值（°C）</value>
+  </data>
+  <data xml:space="preserve" name="HotDescription">
+    <value>達到此溫度時顯示橘色</value>
+  </data>
+  <data xml:space="preserve" name="CriticalTitle">
+    <value>危險臨界值（°C）</value>
+  </data>
+  <data xml:space="preserve" name="CriticalDescription">
+    <value>達到此溫度時顯示紅色並警示</value>
+  </data>
+  <data xml:space="preserve" name="CompactTitle">
+    <value>預設使用精簡版面</value>
+  </data>
+  <data xml:space="preserve" name="CompactDescription">
+    <value>開啟清單時隱藏次要欄位</value>
+  </data>
+  <data xml:space="preserve" name="MergeLoadTitle">
+    <value>Dock 合併顯示使用率</value>
+  </data>
+  <data xml:space="preserve" name="MergeLoadDescription">
+    <value>溫度後附加同一硬體的使用率以節省空間</value>
+  </data>
+  <data xml:space="preserve" name="ToggleCompact">
+    <value>切換精簡版面</value>
+  </data>
+  <data xml:space="preserve" name="TogglePin">
+    <value>釘選至 Dock／取消釘選</value>
+  </data>
+  <data xml:space="preserve" name="DockTitle">
+    <value>硬體讀值</value>
+  </data>
+  <data xml:space="preserve" name="NoData">
+    <value>暫無資料</value>
+  </data>
+  <data xml:space="preserve" name="Open">
+    <value>開啟</value>
+  </data>
+  <data xml:space="preserve" name="View">
+    <value>檢視</value>
+  </data>
+  <data xml:space="preserve" name="FilterSensors">
+    <value>篩選感測器…</value>
+  </data>
+  <data xml:space="preserve" name="StaleSubtitle">
+    <value>{0} · {1} · 資料可能已過期</value>
+  </data>
+  <data xml:space="preserve" name="ViewTrend">
+    <value>檢視趨勢圖</value>
+  </data>
+  <data xml:space="preserve" name="ListFooter">
+    <value>{0} 項 · 溫度 {1} 項 · 已釘選 {2} 項 · 峰值 {3}°C{4}</value>
+  </data>
+  <data xml:space="preserve" name="ReadingDetails">
+    <value>讀值詳細資訊</value>
+  </data>
+  <data xml:space="preserve" name="ReadingMissing">
+    <value># 找不到讀值
+
+`{0}` 不在目前的快照中。</value>
+  </data>
+  <data xml:space="preserve" name="SourceLine">
+    <value>- 來源：`{0}`</value>
+  </data>
+  <data xml:space="preserve" name="HardwareLine">
+    <value>- 硬體：{0} · 群組：{1}</value>
+  </data>
+  <data xml:space="preserve" name="HistoryLine">
+    <value>- 歷史取樣：{0}/180 點</value>
+  </data>
+  <data xml:space="preserve" name="Sampling">
+    <value>_取樣中，稍候即可查看趨勢…_</value>
+  </data>
+  <data xml:space="preserve" name="TrendHeading">
+    <value>## 趨勢圖（asciichart）</value>
+  </data>
+  <data xml:space="preserve" name="ChartSummary">
+    <value>目前 **{0}** · 單位 `{1}` · 約 3 分鐘 · 取樣點 {2}/{3}</value>
+  </data>
+  <data xml:space="preserve" name="Thresholds">
+    <value>臨界值：偏熱 {0:0}° · 過熱 {1:0}° · 危險 {2:0}°</value>
+  </data>
+  <data xml:space="preserve" name="RecentSamples">
+    <value>## 近期取樣</value>
+  </data>
+  <data xml:space="preserve" name="SampleTableHeader">
+    <value>時間／讀值</value>
+  </data>
+  <data xml:space="preserve" name="Time">
+    <value>時間</value>
+  </data>
+  <data xml:space="preserve" name="Value">
+    <value>讀值</value>
+  </data>
+  <data xml:space="preserve" name="NotExtension">
+    <value>未以 Command Palette 擴充功能啟動，即將結束。</value>
+  </data>
+  <data xml:space="preserve" name="Initializing">
+    <value>初始化中…</value>
+  </data>
+  <data xml:space="preserve" name="BackendFailedNoPawn">
+    <value>LHM 無法開啟 · 未安裝 PawnIO</value>
+  </data>
+  <data xml:space="preserve" name="BackendFailedPawn">
+    <value>LHM 無法開啟 · 已安裝 PawnIO</value>
+  </data>
+  <data xml:space="preserve" name="BackendNoPawn">
+    <value>LibreHardwareMonitor（未安裝 PawnIO）</value>
+  </data>
+  <data xml:space="preserve" name="BackendPawn">
+    <value>LibreHardwareMonitor + 已安裝 PawnIO</value>
+  </data>
+  <data xml:space="preserve" name="ChartCollecting">
+    <value>取樣點不足，正在收集中…</value>
+  </data>
+  <data xml:space="preserve" name="Hot">
+    <value>過熱</value>
+  </data>
+  <data xml:space="preserve" name="Critical">
+    <value>危險</value>
+  </data>
+  <data xml:space="preserve" name="RenderedChartSummary">
+    <value>目前 {0:0}{1} · 範圍 {2:0}–{3:0} · {4} 個取樣點</value>
+  </data>
+  <data xml:space="preserve" name="DashboardUnavailable">
+    <value>缺少儀表板檔案。請將專案中的 index.html 及其資源複製到此資料夾。</value>
+  </data>
+  <data xml:space="preserve" name="GroupCpu">
+    <value>處理器</value>
+  </data>
+  <data xml:space="preserve" name="GroupGpu">
+    <value>顯示卡</value>
+  </data>
+  <data xml:space="preserve" name="GroupStorage">
+    <value>儲存裝置</value>
+  </data>
+  <data xml:space="preserve" name="GroupBoard">
+    <value>主機板</value>
+  </data>
+  <data xml:space="preserve" name="GroupMemory">
+    <value>記憶體</value>
+  </data>
+  <data xml:space="preserve" name="GroupBattery">
+    <value>電池</value>
+  </data>
+  <data xml:space="preserve" name="GroupNetwork">
+    <value>網路</value>
+  </data>
+  <data xml:space="preserve" name="GroupOther">
+    <value>其他</value>
+  </data>
+  <data xml:space="preserve" name="GroupStatus">
+    <value>狀態</value>
+  </data>
+  <data xml:space="preserve" name="CpuLoad">
+    <value>CPU 使用率</value>
+  </data>
+  <data xml:space="preserve" name="CpuTotalLoad">
+    <value>CPU 總使用率</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackageTctl">
+    <value>CPU 封裝溫度（Tctl）</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackageTemperature">
+    <value>CPU 封裝溫度</value>
+  </data>
+  <data xml:space="preserve" name="CpuCoreTemperature">
+    <value>CPU 核心平均溫度</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackagePower">
+    <value>CPU 封裝功率</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackagePowerEstimated">
+    <value>CPU 封裝功率（估計值）</value>
+  </data>
+  <data xml:space="preserve" name="CpuCoreClock">
+    <value>CPU 核心時脈</value>
+  </data>
+  <data xml:space="preserve" name="GpuCoreTemperature">
+    <value>GPU 核心溫度</value>
+  </data>
+  <data xml:space="preserve" name="GpuLoad">
+    <value>GPU 核心使用率</value>
+  </data>
+  <data xml:space="preserve" name="GpuPower">
+    <value>GPU 功率</value>
+  </data>
+  <data xml:space="preserve" name="GpuHotSpot">
+    <value>GPU 熱點</value>
+  </data>
+  <data xml:space="preserve" name="HelperSource">
+    <value>系統權限輔助程式 · LHM</value>
+  </data>
+  <data xml:space="preserve" name="EstimatedSource">
+    <value>估計值 · 使用率×TDP65</value>
+  </data>
+  <data xml:space="preserve" name="SsdTemperature">
+    <value>SSD 溫度</value>
+  </data>
+  <data xml:space="preserve" name="SsdReadRate">
+    <value>SSD 讀取速率</value>
+  </data>
+  <data xml:space="preserve" name="BoardTemperature">
+    <value>主機板溫度</value>
+  </data>
+  <data xml:space="preserve" name="CpuFanSpeed">
+    <value>CPU 風扇轉速</value>
+  </data>
+  <data xml:space="preserve" name="MemoryLoad">
+    <value>記憶體使用率</value>
+  </data>
+  <data xml:space="preserve" name="SensorReadFailed">
+    <value>無法讀取感測器</value>
+  </data>
+  <data xml:space="preserve" name="CheckPermissions">
+    <value>請檢查 PawnIO／系統管理員權限</value>
+  </data>
+  <data xml:space="preserve" name="DemoSource">
+    <value>示範 · 模擬資料</value>
+  </data>
+  <data xml:space="preserve" name="LabelPackage">
+    <value>{0} 封裝</value>
+  </data>
+  <data xml:space="preserve" name="LabelHotSpot">
+    <value>{0} 熱點</value>
+  </data>
+  <data xml:space="preserve" name="LabelTemperature">
+    <value>{0} 溫度</value>
+  </data>
+  <data xml:space="preserve" name="LabelPower">
+    <value>{0} 功率</value>
+  </data>
+  <data xml:space="preserve" name="LabelCore">
+    <value>{0} 核心</value>
+  </data>
+  <data xml:space="preserve" name="LabelClock">
+    <value>{0} 時脈</value>
+  </data>
+  <data xml:space="preserve" name="LabelRead">
+    <value>{0} 讀取</value>
+  </data>
+  <data xml:space="preserve" name="LabelFan">
+    <value>{0} 風扇</value>
+  </data>
+  <data xml:space="preserve" name="AcpiZone">
+    <value>ACPI 熱區 {0}</value>
+  </data>
+  <data xml:space="preserve" name="EstimatedName">
+    <value>{0}（估計值）</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsTitle">
+    <value>設定 Dock 讀值</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsDescription">
+    <value>選擇要在 Dock 顯示的感測器讀值</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsOpen">
+    <value>設定</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsFilter">
+    <value>篩選感測器讀值…</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsPinned">
+    <value>已釘選</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsUnpinned">
+    <value>未釘選</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsUnavailable">
+    <value>感測器無法使用</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsPin">
+    <value>在 Dock 顯示</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsUnpin">
+    <value>從 Dock 隱藏</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsEmpty">
+    <value>等待感測器讀值…</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsEmptyDescription">
+    <value>硬體取樣就緒後，讀值即會顯示。</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsCount">
+    <value>已釘選 {0} 項讀值</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsChart">
+    <value>檢視趨勢圖</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsClear">
+    <value>隱藏全部讀值</value>
+  </data>
+  <data xml:space="preserve" name="WebPreparing">
+    <value>即時取樣 · 準備中…</value>
+  </data>
+  <data xml:space="preserve" name="Compact">
+    <value>精簡</value>
+  </data>
+  <data xml:space="preserve" name="Default">
+    <value>標準</value>
+  </data>
+  <data xml:space="preserve" name="Stress">
+    <value>模擬高負載</value>
+  </data>
+  <data xml:space="preserve" name="Pause">
+    <value>暫停</value>
+  </data>
+  <data xml:space="preserve" name="Resume">
+    <value>繼續</value>
+  </data>
+  <data xml:space="preserve" name="DockHeading">
+    <value>Command Palette · Dock</value>
+  </data>
+  <data xml:space="preserve" name="AllReadings">
+    <value>全部讀值</value>
+  </data>
+  <data xml:space="preserve" name="MiscHeading">
+    <value>主機板／風扇／記憶體</value>
+  </data>
+  <data xml:space="preserve" name="DetailsTable">
+    <value>詳細資料</value>
+  </data>
+  <data xml:space="preserve" name="SelectRowHint">
+    <value>點選資料列以切換主圖表</value>
+  </data>
+  <data xml:space="preserve" name="Metric">
+    <value>指標</value>
+  </data>
+  <data xml:space="preserve" name="Group">
+    <value>群組</value>
+  </data>
+  <data xml:space="preserve" name="Kind">
+    <value>類型</value>
+  </data>
+  <data xml:space="preserve" name="CurrentValue">
+    <value>目前讀值</value>
+  </data>
+  <data xml:space="preserve" name="Source">
+    <value>來源</value>
+  </data>
+  <data xml:space="preserve" name="Reading">
+    <value>讀值</value>
+  </data>
+  <data xml:space="preserve" name="LiveStopped">
+    <value>即時資料已停止更新（請保持擴充功能執行）· 最後更新 {0}</value>
+  </data>
+  <data xml:space="preserve" name="WebChartStats">
+    <value>{0} · {1}–{2} · {3} 個取樣點</value>
+  </data>
+  <data xml:space="preserve" name="CpuTempShort">
+    <value>CPU 溫度</value>
+  </data>
+  <data xml:space="preserve" name="CpuPowerShort">
+    <value>CPU 功率</value>
+  </data>
+  <data xml:space="preserve" name="CpuLoadShort">
+    <value>CPU 使用率</value>
+  </data>
+  <data xml:space="preserve" name="GpuTempShort">
+    <value>GPU 溫度</value>
+  </data>
+  <data xml:space="preserve" name="SsdTempShort">
+    <value>SSD 溫度</value>
+  </data>
+  <data xml:space="preserve" name="Fan">
+    <value>風扇</value>
+  </data>
+  <data xml:space="preserve" name="LiveMode">
+    <value>即時資料 · PawnIO/LHM</value>
+  </data>
+  <data xml:space="preserve" name="DemoMode">
+    <value>示範資料（未偵測到 live-data.js）</value>
+  </data>
+  <data xml:space="preserve" name="UpdatedAt">
+    <value>更新時間 {0} · </value>
+  </data>
+  <data xml:space="preserve" name="WebMeta">
+    <value>{0} 項 · {1}{2}</value>
+  </data>
+  <data xml:space="preserve" name="PausedSuffix">
+    <value> · 已暫停</value>
+  </data>
+  <data xml:space="preserve" name="Pinned">
+    <value>已釘選</value>
+  </data>
+  <data xml:space="preserve" name="Pin">
+    <value>釘選</value>
+  </data>
+  <data xml:space="preserve" name="KindTemperature">
+    <value>溫度</value>
+  </data>
+  <data xml:space="preserve" name="KindLoad">
+    <value>使用率</value>
+  </data>
+  <data xml:space="preserve" name="KindClock">
+    <value>時脈</value>
+  </data>
+  <data xml:space="preserve" name="KindPower">
+    <value>功率</value>
+  </data>
+  <data xml:space="preserve" name="KindFan">
+    <value>風扇轉速</value>
+  </data>
+  <data xml:space="preserve" name="KindData">
+    <value>資料</value>
+  </data>
+  <data xml:space="preserve" name="KindVoltage">
+    <value>電壓</value>
+  </data>
+  <data xml:space="preserve" name="KindLevel">
+    <value>水準</value>
+  </data>
+  <data xml:space="preserve" name="KindFlow">
+    <value>流量</value>
+  </data>
+  <data xml:space="preserve" name="KindControl">
+    <value>控制</value>
+  </data>
+  <data xml:space="preserve" name="KindFactor">
+    <value>係數</value>
+  </data>
+  <data xml:space="preserve" name="KindEnergy">
+    <value>能量</value>
+  </data>
+  <data xml:space="preserve" name="KindNoise">
+    <value>噪音</value>
+  </data>
+  <data xml:space="preserve" name="KindTimespan">
+    <value>時間長度</value>
+  </data>
+  <data xml:space="preserve" name="KindOther">
+    <value>其他</value>
+  </data>
+</root>

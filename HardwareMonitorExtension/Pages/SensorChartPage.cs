@@ -1,3 +1,4 @@
+using HardwareMonitorExtension.Localization;
 // Copyright (c) HardwareMonitor. MIT license.
 // 趋势图：使用 MIT 项目 asciichart-sharp（kroitor/asciichart 的 C# 移植），
 // 输出标准 ╭─╮ 盒线字符折线，非位图。
@@ -21,13 +22,13 @@ internal sealed partial class SensorChartPage : ContentPage
         _hub = hub;
         _sensorId = sensorId;
         Icon = new IconInfo("📈");
-        Title = "读数详情";
-        Name = "查看";
+        Title = Text.Get("ReadingDetails");
+        Name = Text.Get("View");
         Commands =
         [
             new CommandContextItem(new OpenDashboardCommand())
             {
-                Title = "打开实时图表看板",
+                Title = Text.Get("OpenDashboard"),
                 Icon = new IconInfo("🌐"),
             },
         ];
@@ -61,23 +62,23 @@ internal sealed partial class SensorChartPage : ContentPage
         var snap = _hub.Snapshot;
         var sensor = snap.Find(_sensorId);
         if (sensor is null)
-            return [new MarkdownContent($"# 未找到读数\n\n`{_sensorId}` 不在当前快照中。")];
+            return [new MarkdownContent(Text.Format("ReadingMissing", _sensorId))];
 
         var series = _hub.History.Snapshot(_sensorId);
 
         var sb = new StringBuilder();
-        sb.AppendLine($"# {sensor.ShortLabel}  {sensor.DisplayValue}");
+        sb.AppendLine($"# {Text.DisplayLabel(sensor.ShortLabel)}  {sensor.DisplayValue}");
         sb.AppendLine();
-        sb.AppendLine($"{sensor.Name}");
+        sb.AppendLine(Text.DisplayName(sensor.Name));
         sb.AppendLine();
-        sb.AppendLine($"- 来源：`{sensor.Source}`");
-        sb.AppendLine($"- 硬件：{sensor.HardwareName} · 分组：{sensor.Group}");
-        sb.AppendLine($"- 历史点：{series.Count}/180");
+        sb.AppendLine(Text.Format("SourceLine", Text.DisplayName(sensor.Source)));
+        sb.AppendLine(Text.Format("HardwareLine", sensor.HardwareName, Text.DisplayGroup(sensor.Group)));
+        sb.AppendLine(Text.Format("HistoryLine", series.Count));
         sb.AppendLine();
 
         if (series.Count < 2)
         {
-            sb.AppendLine("_采样中，稍候即可看到趋势…_");
+            sb.AppendLine(Text.Get("Sampling"));
             return [new MarkdownContent(sb.ToString())];
         }
 
@@ -117,25 +118,25 @@ internal sealed partial class SensorChartPage : ContentPage
         // 在图下方追加时间轴（asciichart-sharp 本身无 X 轴 API）
         var timeAxis = BuildTimeAxis(picked);
 
-        sb.AppendLine("## 趋势（asciichart · 代码绘制，非位图）");
+        sb.AppendLine(Text.Get("TrendHeading"));
         sb.AppendLine();
         sb.AppendLine("```");
         sb.AppendLine(chart);
         sb.AppendLine(timeAxis);
         sb.AppendLine("```");
         sb.AppendLine();
-        sb.AppendLine($"当前 **{sensor.DisplayValue}** · 单位 `{sensor.Unit}` · 窗口约 3 分钟 · 点 {sampled.Length}/{series.Count}");
+        sb.AppendLine(Text.Format("ChartSummary", sensor.DisplayValue, sensor.Unit, sampled.Length, series.Count));
 
         if (isTemp)
         {
             sb.AppendLine();
-            sb.AppendLine($"阈值：偏热 {ThresholdPolicy.WarmC:0}° · 过热 {ThresholdPolicy.HotC:0}° · 危险 {ThresholdPolicy.CriticalC:0}°");
+            sb.AppendLine(Text.Format("Thresholds", ThresholdPolicy.WarmC, ThresholdPolicy.HotC, ThresholdPolicy.CriticalC));
         }
 
         sb.AppendLine();
-        sb.AppendLine("## 近期采样");
+        sb.AppendLine(Text.Get("RecentSamples"));
         sb.AppendLine();
-        sb.AppendLine("| 时间 | 值 |");
+        sb.AppendLine($"| {Text.Get("Time")} | {Text.Get("Value")} |");
         sb.AppendLine("| --- | --- |");
         foreach (var (ts, v) in series.TakeLast(8).Reverse())
         {

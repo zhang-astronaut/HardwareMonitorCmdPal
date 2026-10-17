@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,16 +10,16 @@
   <div class="shell">
     <header class="top">
       <div>
-        <h1>Hardware Monitor</h1>
-        <p class="meta" id="metaLine">实时采样 · 准备中…</p>
+        <h1 data-i18n="AppName">Hardware Monitor</h1>
+        <p class="meta" id="metaLine" data-i18n="WebPreparing">Live sampling · Preparing…</p>
       </div>
       <div class="top-actions">
         <div class="seg" id="sizeSeg">
-          <button type="button" data-size="compact">Compact</button>
-          <button type="button" data-size="default" class="active">Default</button>
+          <button type="button" data-size="compact" data-i18n="Compact">Compact</button>
+          <button type="button" data-size="default" class="active" data-i18n="Default">Default</button>
         </div>
-        <button type="button" class="btn" id="stressBtn">压测</button>
-        <button type="button" class="btn" id="pauseBtn">暂停</button>
+        <button type="button" class="btn" id="stressBtn" data-i18n="Stress">Simulate stress</button>
+        <button type="button" class="btn" id="pauseBtn" data-i18n="Pause">Pause</button>
       </div>
     </header>
 
@@ -28,14 +28,14 @@
     <section class="stage">
       <aside class="panel">
         <div class="panel-h">
-          <h2>命令面板 · Dock</h2>
+          <h2 data-i18n="DockHeading">Command Palette · Dock</h2>
           <span id="dockMode">Default</span>
         </div>
         <div class="dock-wrap">
           <div class="dock" id="dock"></div>
         </div>
         <div class="panel-h" style="margin-top:8px">
-          <h2>全部读数</h2>
+          <h2 data-i18n="AllReadings">All readings</h2>
           <span id="listCount">0</span>
         </div>
         <div class="list" id="sensorList"></div>
@@ -43,7 +43,7 @@
 
       <main class="panel">
         <div class="panel-h">
-          <h2 id="chartTitle">CPU 封装</h2>
+          <h2 id="chartTitle" data-i18n="CpuPackageTemperature">CPU package temperature</h2>
           <span id="chartStats">—</span>
         </div>
         <div class="chart-block">
@@ -63,12 +63,12 @@
             <div class="rows" id="gpuRows"></div>
           </article>
           <article class="mini">
-            <header><h3>存储</h3><span id="diskNow">—</span></header>
+            <header><h3 data-i18n="GroupStorage">Storage</h3><span id="diskNow">—</span></header>
             <canvas id="diskMini" width="360" height="110"></canvas>
             <div class="rows" id="diskRows"></div>
           </article>
           <article class="mini">
-            <header><h3>主板 / 风扇 / 内存</h3><span id="miscNow">—</span></header>
+            <header><h3 data-i18n="MiscHeading">Motherboard / Fans / Memory</h3><span id="miscNow">—</span></header>
             <canvas id="miscMini" width="360" height="110"></canvas>
             <div class="rows" id="miscRows"></div>
           </article>
@@ -78,14 +78,14 @@
 
     <section class="panel table-panel">
       <div class="panel-h">
-        <h2>明细表</h2>
-        <span id="tableFilterNote">点击行可切换主图</span>
+        <h2 data-i18n="DetailsTable">Details</h2>
+        <span id="tableFilterNote" data-i18n="SelectRowHint">Select a row to change the main chart</span>
       </div>
       <div class="table-wrap">
         <table id="dataTable">
           <thead>
             <tr>
-              <th>指标</th><th>分组</th><th>类型</th><th>当前值</th><th>来源</th><th></th>
+              <th data-i18n="Metric">Metric</th><th data-i18n="Group">Group</th><th data-i18n="Kind">Type</th><th data-i18n="CurrentValue">Current value</th><th data-i18n="Source">Source</th><th></th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -93,6 +93,8 @@
       </div>
     </section>
   </div>
+  <script src="i18n-data.js"></script>
+  <script src="i18n.js"></script>
   <script src="live-data.js"></script>
   <script src="app.js"></script>
 </body>

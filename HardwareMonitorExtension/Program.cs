@@ -1,3 +1,4 @@
+using HardwareMonitorExtension.Localization;
 // Copyright (c) HardwareMonitor. MIT license.
 // COM 宿主入口 —— 与官方 TemplateCmdPalExtension 一致。
 
@@ -23,7 +24,7 @@ public class Program
 
         if (args.Length == 0 || args[0] != "-RegisterProcessAsComServer")
         {
-            Console.WriteLine("Not being launched as a Extension... exiting.");
+            Console.WriteLine(Text.Get("NotExtension"));
             return;
         }
 

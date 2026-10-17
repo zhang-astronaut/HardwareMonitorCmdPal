@@ -1,0 +1,476 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="AppName">
+    <value>Hardware Monitor</value>
+  </data>
+  <data xml:space="preserve" name="AllSensorsSubtitle">
+    <value>All sensors · Pin readings to the Dock</value>
+  </data>
+  <data xml:space="preserve" name="OpenDashboard">
+    <value>Open live dashboard</value>
+  </data>
+  <data xml:space="preserve" name="DashboardTitle">
+    <value>Live dashboard</value>
+  </data>
+  <data xml:space="preserve" name="DashboardSubtitle">
+    <value>Offline dashboard · btop style</value>
+  </data>
+  <data xml:space="preserve" name="InstallHelper">
+    <value>Install CPU temperature startup sampling (once)</value>
+  </data>
+  <data xml:space="preserve" name="InstallHelperSubtitle">
+    <value>Runs automatically at startup; CPU Tctl requires elevated sampling</value>
+  </data>
+  <data xml:space="preserve" name="RefreshTitle">
+    <value>Page refresh interval (ms)</value>
+  </data>
+  <data xml:space="preserve" name="RefreshDescription">
+    <value>500–3000; applies while the page is visible</value>
+  </data>
+  <data xml:space="preserve" name="HotTitle">
+    <value>Hot threshold (°C)</value>
+  </data>
+  <data xml:space="preserve" name="HotDescription">
+    <value>Show orange at this temperature</value>
+  </data>
+  <data xml:space="preserve" name="CriticalTitle">
+    <value>Critical threshold (°C)</value>
+  </data>
+  <data xml:space="preserve" name="CriticalDescription">
+    <value>Show red and warn at this temperature</value>
+  </data>
+  <data xml:space="preserve" name="CompactTitle">
+    <value>Use compact layout by default</value>
+  </data>
+  <data xml:space="preserve" name="CompactDescription">
+    <value>Hide secondary fields when opening the list</value>
+  </data>
+  <data xml:space="preserve" name="MergeLoadTitle">
+    <value>Combine utilization in the Dock</value>
+  </data>
+  <data xml:space="preserve" name="MergeLoadDescription">
+    <value>Append hardware utilization after temperature to save space</value>
+  </data>
+  <data xml:space="preserve" name="ToggleCompact">
+    <value>Toggle compact layout</value>
+  </data>
+  <data xml:space="preserve" name="TogglePin">
+    <value>Pin to Dock / Unpin</value>
+  </data>
+  <data xml:space="preserve" name="DockTitle">
+    <value>Hardware readings</value>
+  </data>
+  <data xml:space="preserve" name="NoData">
+    <value>No data</value>
+  </data>
+  <data xml:space="preserve" name="Open">
+    <value>Open</value>
+  </data>
+  <data xml:space="preserve" name="View">
+    <value>View</value>
+  </data>
+  <data xml:space="preserve" name="FilterSensors">
+    <value>Filter sensors…</value>
+  </data>
+  <data xml:space="preserve" name="StaleSubtitle">
+    <value>{0} · {1} · May be outdated</value>
+  </data>
+  <data xml:space="preserve" name="ViewTrend">
+    <value>View trend</value>
+  </data>
+  <data xml:space="preserve" name="ListFooter">
+    <value>{0} readings · {1} temperatures · {2} pinned · Peak {3}°C{4}</value>
+  </data>
+  <data xml:space="preserve" name="ReadingDetails">
+    <value>Reading details</value>
+  </data>
+  <data xml:space="preserve" name="ReadingMissing">
+    <value># Reading not found
+
+`{0}` is not in the current snapshot.</value>
+  </data>
+  <data xml:space="preserve" name="SourceLine">
+    <value>- Source: `{0}`</value>
+  </data>
+  <data xml:space="preserve" name="HardwareLine">
+    <value>- Hardware: {0} · Group: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HistoryLine">
+    <value>- History: {0}/180 samples</value>
+  </data>
+  <data xml:space="preserve" name="Sampling">
+    <value>_Collecting samples; the trend will appear shortly…_</value>
+  </data>
+  <data xml:space="preserve" name="TrendHeading">
+    <value>## Trend (asciichart)</value>
+  </data>
+  <data xml:space="preserve" name="ChartSummary">
+    <value>Current **{0}** · Unit `{1}` · About 3 minutes · Samples {2}/{3}</value>
+  </data>
+  <data xml:space="preserve" name="Thresholds">
+    <value>Thresholds: warm {0:0}° · hot {1:0}° · critical {2:0}°</value>
+  </data>
+  <data xml:space="preserve" name="RecentSamples">
+    <value>## Recent samples</value>
+  </data>
+  <data xml:space="preserve" name="SampleTableHeader">
+    <value>Time / Value</value>
+  </data>
+  <data xml:space="preserve" name="Time">
+    <value>Time</value>
+  </data>
+  <data xml:space="preserve" name="Value">
+    <value>Value</value>
+  </data>
+  <data xml:space="preserve" name="NotExtension">
+    <value>Not launched as a Command Palette extension. Exiting.</value>
+  </data>
+  <data xml:space="preserve" name="Initializing">
+    <value>Initializing…</value>
+  </data>
+  <data xml:space="preserve" name="BackendFailedNoPawn">
+    <value>LHM failed to open · PawnIO not installed</value>
+  </data>
+  <data xml:space="preserve" name="BackendFailedPawn">
+    <value>LHM failed to open · PawnIO installed</value>
+  </data>
+  <data xml:space="preserve" name="BackendNoPawn">
+    <value>LibreHardwareMonitor (no PawnIO)</value>
+  </data>
+  <data xml:space="preserve" name="BackendPawn">
+    <value>LibreHardwareMonitor + PawnIO installed</value>
+  </data>
+  <data xml:space="preserve" name="ChartCollecting">
+    <value>Not enough samples; collecting…</value>
+  </data>
+  <data xml:space="preserve" name="Hot">
+    <value>Hot</value>
+  </data>
+  <data xml:space="preserve" name="Critical">
+    <value>Critical</value>
+  </data>
+  <data xml:space="preserve" name="RenderedChartSummary">
+    <value>Current {0:0}{1} · Range {2:0}–{3:0} · {4} samples</value>
+  </data>
+  <data xml:space="preserve" name="DashboardUnavailable">
+    <value>The dashboard assets are missing. Copy index.html and its assets from the project into this folder.</value>
+  </data>
+  <data xml:space="preserve" name="GroupCpu">
+    <value>Processor</value>
+  </data>
+  <data xml:space="preserve" name="GroupGpu">
+    <value>Graphics</value>
+  </data>
+  <data xml:space="preserve" name="GroupStorage">
+    <value>Storage</value>
+  </data>
+  <data xml:space="preserve" name="GroupBoard">
+    <value>Motherboard</value>
+  </data>
+  <data xml:space="preserve" name="GroupMemory">
+    <value>Memory</value>
+  </data>
+  <data xml:space="preserve" name="GroupBattery">
+    <value>Battery</value>
+  </data>
+  <data xml:space="preserve" name="GroupNetwork">
+    <value>Network</value>
+  </data>
+  <data xml:space="preserve" name="GroupOther">
+    <value>Other</value>
+  </data>
+  <data xml:space="preserve" name="GroupStatus">
+    <value>Status</value>
+  </data>
+  <data xml:space="preserve" name="CpuLoad">
+    <value>CPU utilization</value>
+  </data>
+  <data xml:space="preserve" name="CpuTotalLoad">
+    <value>CPU total utilization</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackageTctl">
+    <value>CPU package temperature (Tctl)</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackageTemperature">
+    <value>CPU package temperature</value>
+  </data>
+  <data xml:space="preserve" name="CpuCoreTemperature">
+    <value>CPU average core temperature</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackagePower">
+    <value>CPU package power</value>
+  </data>
+  <data xml:space="preserve" name="CpuPackagePowerEstimated">
+    <value>CPU package power (estimated)</value>
+  </data>
+  <data xml:space="preserve" name="CpuCoreClock">
+    <value>CPU core clock</value>
+  </data>
+  <data xml:space="preserve" name="GpuCoreTemperature">
+    <value>GPU core temperature</value>
+  </data>
+  <data xml:space="preserve" name="GpuLoad">
+    <value>GPU core utilization</value>
+  </data>
+  <data xml:space="preserve" name="GpuPower">
+    <value>GPU power</value>
+  </data>
+  <data xml:space="preserve" name="GpuHotSpot">
+    <value>GPU hot spot</value>
+  </data>
+  <data xml:space="preserve" name="HelperSource">
+    <value>Elevated helper · LHM</value>
+  </data>
+  <data xml:space="preserve" name="EstimatedSource">
+    <value>Estimated · load×TDP65</value>
+  </data>
+  <data xml:space="preserve" name="SsdTemperature">
+    <value>SSD temperature</value>
+  </data>
+  <data xml:space="preserve" name="SsdReadRate">
+    <value>SSD read rate</value>
+  </data>
+  <data xml:space="preserve" name="BoardTemperature">
+    <value>Motherboard temperature</value>
+  </data>
+  <data xml:space="preserve" name="CpuFanSpeed">
+    <value>CPU fan speed</value>
+  </data>
+  <data xml:space="preserve" name="MemoryLoad">
+    <value>Memory utilization</value>
+  </data>
+  <data xml:space="preserve" name="SensorReadFailed">
+    <value>Unable to read sensors</value>
+  </data>
+  <data xml:space="preserve" name="CheckPermissions">
+    <value>Check PawnIO / administrator permissions</value>
+  </data>
+  <data xml:space="preserve" name="DemoSource">
+    <value>Demo · Simulated</value>
+  </data>
+  <data xml:space="preserve" name="LabelPackage">
+    <value>{0} package</value>
+  </data>
+  <data xml:space="preserve" name="LabelHotSpot">
+    <value>{0} hot spot</value>
+  </data>
+  <data xml:space="preserve" name="LabelTemperature">
+    <value>{0} temperature</value>
+  </data>
+  <data xml:space="preserve" name="LabelPower">
+    <value>{0} power</value>
+  </data>
+  <data xml:space="preserve" name="LabelCore">
+    <value>{0} core</value>
+  </data>
+  <data xml:space="preserve" name="LabelClock">
+    <value>{0} clock</value>
+  </data>
+  <data xml:space="preserve" name="LabelRead">
+    <value>{0} read</value>
+  </data>
+  <data xml:space="preserve" name="LabelFan">
+    <value>{0} fan</value>
+  </data>
+  <data xml:space="preserve" name="AcpiZone">
+    <value>ACPI thermal zone {0}</value>
+  </data>
+  <data xml:space="preserve" name="EstimatedName">
+    <value>{0} (estimated)</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsTitle">
+    <value>Configure Dock readings</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsDescription">
+    <value>Choose which sensor readings appear in the Dock</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsOpen">
+    <value>Configure</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsFilter">
+    <value>Filter sensor readings…</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsPinned">
+    <value>Pinned</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsUnpinned">
+    <value>Not pinned</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsUnavailable">
+    <value>Sensor unavailable</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsPin">
+    <value>Show in Dock</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsUnpin">
+    <value>Hide from Dock</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsEmpty">
+    <value>Waiting for sensor readings…</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsEmptyDescription">
+    <value>Readings will appear when hardware sampling is ready.</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsCount">
+    <value>{0} readings pinned</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsChart">
+    <value>View trend</value>
+  </data>
+  <data xml:space="preserve" name="DockSettingsClear">
+    <value>Hide all readings</value>
+  </data>
+  <data xml:space="preserve" name="WebPreparing">
+    <value>Live sampling · Preparing…</value>
+  </data>
+  <data xml:space="preserve" name="Compact">
+    <value>Compact</value>
+  </data>
+  <data xml:space="preserve" name="Default">
+    <value>Default</value>
+  </data>
+  <data xml:space="preserve" name="Stress">
+    <value>Simulate stress</value>
+  </data>
+  <data xml:space="preserve" name="Pause">
+    <value>Pause</value>
+  </data>
+  <data xml:space="preserve" name="Resume">
+    <value>Resume</value>
+  </data>
+  <data xml:space="preserve" name="DockHeading">
+    <value>Command Palette · Dock</value>
+  </data>
+  <data xml:space="preserve" name="AllReadings">
+    <value>All readings</value>
+  </data>
+  <data xml:space="preserve" name="MiscHeading">
+    <value>Motherboard / Fans / Memory</value>
+  </data>
+  <data xml:space="preserve" name="DetailsTable">
+    <value>Details</value>
+  </data>
+  <data xml:space="preserve" name="SelectRowHint">
+    <value>Select a row to change the main chart</value>
+  </data>
+  <data xml:space="preserve" name="Metric">
+    <value>Metric</value>
+  </data>
+  <data xml:space="preserve" name="Group">
+    <value>Group</value>
+  </data>
+  <data xml:space="preserve" name="Kind">
+    <value>Type</value>
+  </data>
+  <data xml:space="preserve" name="CurrentValue">
+    <value>Current value</value>
+  </data>
+  <data xml:space="preserve" name="Source">
+    <value>Source</value>
+  </data>
+  <data xml:space="preserve" name="Reading">
+    <value>Reading</value>
+  </data>
+  <data xml:space="preserve" name="LiveStopped">
+    <value>Live updates stopped (keep the extension running) · Last {0}</value>
+  </data>
+  <data xml:space="preserve" name="WebChartStats">
+    <value>{0} · {1}–{2} · {3} samples</value>
+  </data>
+  <data xml:space="preserve" name="CpuTempShort">
+    <value>CPU temp</value>
+  </data>
+  <data xml:space="preserve" name="CpuPowerShort">
+    <value>CPU power</value>
+  </data>
+  <data xml:space="preserve" name="CpuLoadShort">
+    <value>CPU load</value>
+  </data>
+  <data xml:space="preserve" name="GpuTempShort">
+    <value>GPU temp</value>
+  </data>
+  <data xml:space="preserve" name="SsdTempShort">
+    <value>SSD temp</value>
+  </data>
+  <data xml:space="preserve" name="Fan">
+    <value>Fan</value>
+  </data>
+  <data xml:space="preserve" name="LiveMode">
+    <value>Live data · PawnIO/LHM</value>
+  </data>
+  <data xml:space="preserve" name="DemoMode">
+    <value>Demo data (live-data.js not detected)</value>
+  </data>
+  <data xml:space="preserve" name="UpdatedAt">
+    <value>Updated {0} · </value>
+  </data>
+  <data xml:space="preserve" name="WebMeta">
+    <value>{0} readings · {1}{2}</value>
+  </data>
+  <data xml:space="preserve" name="PausedSuffix">
+    <value> · Paused</value>
+  </data>
+  <data xml:space="preserve" name="Pinned">
+    <value>Pinned</value>
+  </data>
+  <data xml:space="preserve" name="Pin">
+    <value>Pin</value>
+  </data>
+  <data xml:space="preserve" name="KindTemperature">
+    <value>Temperature</value>
+  </data>
+  <data xml:space="preserve" name="KindLoad">
+    <value>Utilization</value>
+  </data>
+  <data xml:space="preserve" name="KindClock">
+    <value>Clock</value>
+  </data>
+  <data xml:space="preserve" name="KindPower">
+    <value>Power</value>
+  </data>
+  <data xml:space="preserve" name="KindFan">
+    <value>Fan speed</value>
+  </data>
+  <data xml:space="preserve" name="KindData">
+    <value>Data</value>
+  </data>
+  <data xml:space="preserve" name="KindVoltage">
+    <value>Voltage</value>
+  </data>
+  <data xml:space="preserve" name="KindLevel">
+    <value>Level</value>
+  </data>
+  <data xml:space="preserve" name="KindFlow">
+    <value>Flow</value>
+  </data>
+  <data xml:space="preserve" name="KindControl">
+    <value>Control</value>
+  </data>
+  <data xml:space="preserve" name="KindFactor">
+    <value>Factor</value>
+  </data>
+  <data xml:space="preserve" name="KindEnergy">
+    <value>Energy</value>
+  </data>
+  <data xml:space="preserve" name="KindNoise">
+    <value>Noise</value>
+  </data>
+  <data xml:space="preserve" name="KindTimespan">
+    <value>Time span</value>
+  </data>
+  <data xml:space="preserve" name="KindOther">
+    <value>Other</value>
+  </data>
+</root>
