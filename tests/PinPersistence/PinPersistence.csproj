@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../HardwareMonitorExtension/Services/PinnedSensorStore.cs" Link="PinnedSensorStore.cs" />
+    <Compile Include="../../HardwareMonitorExtension/Services/SensorModels.cs" Link="SensorModels.cs" />
+    <Compile Include="../../HardwareMonitorExtension/SensorHub.cs" Link="SensorHub.cs" />
+  </ItemGroup>
+</Project>

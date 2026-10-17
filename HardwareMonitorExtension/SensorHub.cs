@@ -63,8 +63,8 @@ public sealed partial class SensorHub : IDisposable
 
                 if (!_defaultsApplied && Pinned is not null)
                 {
-                    _defaultsApplied = true;
                     Pinned.EnsureDefaults(snap.Sensors);
+                    _defaultsApplied = !Pinned.NeedsDefaultRefresh;
                 }
 
                 // live-data.js 仅在看板活跃时写入（见 LiveSnapshotWriter.IsDashboardActive）

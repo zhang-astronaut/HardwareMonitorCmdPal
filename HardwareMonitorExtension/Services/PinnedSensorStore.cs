@@ -6,8 +6,8 @@ namespace HardwareMonitorExtension.Services;
 public sealed class PinnedSensorStore
 {
     /// <summary>
-    /// 当前默认固定方案的版本号。提高它会让仍在使用旧方案的安装
-    /// 在下次启动时重新应用新默认（Dock 空间有限，默认方案需要随设计演进）。
+    /// Version recorded when defaults are first selected or the user edits pins.
+    /// Existing files do not record whether pins were customized, so preserve them.
     /// </summary>
     public const int CurrentDefaultVersion = 2;
 
@@ -15,17 +15,21 @@ public sealed class PinnedSensorStore
     private readonly string _path;
     private List<string> _ids;
     private int _version;
+    private bool _hasConfiguration;
 
     public event EventHandler? Changed;
 
     public PinnedSensorStore(string path)
     {
         _path = path;
-        (_ids, _version) = Load(path);
+        (_ids, _version, _hasConfiguration) = Load(path);
     }
 
-    /// <summary>存储的固定列表是否仍来自旧版默认方案。</summary>
-    public bool NeedsDefaultRefresh => _version < CurrentDefaultVersion;
+    /// <summary>Whether initial defaults are still waiting for usable sensor readings.</summary>
+    public bool NeedsDefaultRefresh
+    {
+        get { lock (_gate) return !_hasConfiguration; }
+    }
 
     public IReadOnlyList<string> Ids
     {
@@ -47,6 +51,7 @@ public sealed class PinnedSensorStore
         {
             if (_ids.Contains(id, StringComparer.OrdinalIgnoreCase)) return;
             _ids.Add(id);
+            MarkConfigured();
             Save();
         }
 
@@ -60,6 +65,7 @@ public sealed class PinnedSensorStore
             var before = _ids.Count;
             _ids.RemoveAll(x => string.Equals(x, id, StringComparison.OrdinalIgnoreCase));
             if (_ids.Count == before) return;
+            MarkConfigured();
             Save();
         }
 
@@ -79,6 +85,7 @@ public sealed class PinnedSensorStore
             _ids = ids.Where(x => !string.IsNullOrWhiteSpace(x))
                       .Distinct(StringComparer.OrdinalIgnoreCase)
                       .ToList();
+            MarkConfigured();
             Save();
         }
 
@@ -94,7 +101,7 @@ public sealed class PinnedSensorStore
     {
         lock (_gate)
         {
-            if (_ids.Count > 0 && !NeedsDefaultRefresh) return;
+            if (_hasConfiguration) return;
 
             var list = sensors.ToList();
             var picks = new List<string>();
@@ -122,37 +129,45 @@ public sealed class PinnedSensorStore
                             .Take(4).Select(s => s.Id).ToList();
             }
 
+            if (picks.Count == 0) return;
+
             _ids = picks;
-            _version = CurrentDefaultVersion;
+            MarkConfigured();
             Save();
         }
 
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    private (List<string> Ids, int Version) Load(string path)
+    private void MarkConfigured()
+    {
+        _version = CurrentDefaultVersion;
+        _hasConfiguration = true;
+    }
+
+    private static (List<string> Ids, int Version, bool HasConfiguration) Load(string path)
     {
         try
         {
-            if (!File.Exists(path)) return ([], 0);
+            if (!File.Exists(path)) return ([], 0, false);
             var json = File.ReadAllText(path);
             // v2 格式：{"version":2,"ids":[...]}；v1 为纯数组
             try
             {
                 var obj = System.Text.Json.JsonSerializer.Deserialize<Stored>(json);
-                if (obj?.Ids is not null) return (obj.Ids, obj.Version);
+                if (obj?.Ids is not null) return (obj.Ids, obj.Version, true);
             }
             catch (System.Text.Json.JsonException)
             {
-                var ids = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? [];
-                return (ids, 0);
+                var ids = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+                if (ids is not null) return (ids, 0, true);
             }
 
-            return ([], 0);
+            return ([], 0, false);
         }
         catch
         {
-            return ([], 0);
+            return ([], 0, false);
         }
     }
 
