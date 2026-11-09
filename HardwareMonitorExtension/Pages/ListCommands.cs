@@ -1,6 +1,7 @@
 // Copyright (c) HardwareMonitor. MIT license.
 
 using HardwareMonitorExtension.Services;
+using HardwareMonitorExtension.Localization;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -14,8 +15,8 @@ internal sealed partial class ToggleCompactCommand : InvokableCommand
     public ToggleCompactCommand(SensorsListPage page)
     {
         _page = page;
-        Name = "切换紧凑布局";
-        Icon = new IconInfo("☰");
+        Name = Loc.Current.ToggleCompactName;
+        Icon = new IconInfo("🗜");
     }
 
     public override CommandResult Invoke()
@@ -35,7 +36,7 @@ internal sealed partial class TogglePinSensorCommand : InvokableCommand
     {
         _hub = hub;
         _sensorId = sensorId;
-        Name = "固定到快捷栏 / 取消固定";
+        Name = Loc.Current.PinToggleName;
         Icon = new IconInfo("📌");
     }
 
@@ -51,7 +52,7 @@ internal sealed partial class OpenDashboardCommand : InvokableCommand
 {
     public OpenDashboardCommand()
     {
-        Name = "打开实时图表看板";
+        Name = Loc.Current.OpenDashboardTitle;
         Icon = new IconInfo("🌐");
     }
 
@@ -67,7 +68,7 @@ internal sealed partial class StartElevatedTempHelperCommand : InvokableCommand
 {
     public StartElevatedTempHelperCommand()
     {
-        Name = "安装 CPU 温度开机采样（一次）";
+        Name = Loc.Current.InstallHelperTitle;
         Icon = new IconInfo("🔐");
     }
 

@@ -1,6 +1,20 @@
 // Copyright (c) HardwareMonitor. MIT license.
 
+using HardwareMonitorExtension.Localization;
+
 namespace HardwareMonitorExtension.Services;
+
+public static class HardwareGroups
+{
+    public const string Processor = "Processor";
+    public const string Graphics = "Graphics";
+    public const string Storage = "Storage";
+    public const string Motherboard = "Motherboard";
+    public const string Memory = "Memory";
+    public const string Battery = "Battery";
+    public const string Network = "Network";
+    public const string Other = "Other";
+}
 
 public enum HeatLevel
 {
@@ -44,6 +58,7 @@ public sealed record SensorReading(
 {
     public double? TemperatureC => Kind == SensorKind.Temperature ? Value : null;
     public double? LoadPercent => Kind == SensorKind.Load ? Value : null;
+    public string LocalizedGroup => Loc.Current.GetGroupDisplayName(Group);
 
     public string DisplayValue => Kind switch
     {
@@ -88,12 +103,12 @@ public sealed record SensorReading(
     {
         var prefix = Group switch
         {
-            "处理器" => "C",
-            "显卡" => "G",
-            "存储" => "S",
-            "主板" => "M",
-            "内存" => "R",
-            "电池" => "B",
+            HardwareGroups.Processor or "处理器" => "C",
+            HardwareGroups.Graphics or "显卡" => "G",
+            HardwareGroups.Storage or "存储" => "S",
+            HardwareGroups.Motherboard or "主板" => "M",
+            HardwareGroups.Memory or "内存" => "R",
+            HardwareGroups.Battery or "电池" => "B",
             _ => "#",
         };
         return $"{prefix} {FormatDockTitle(mergeLoad)}";

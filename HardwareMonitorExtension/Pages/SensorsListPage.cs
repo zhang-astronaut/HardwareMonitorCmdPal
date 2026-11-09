@@ -1,6 +1,7 @@
 // Copyright (c) HardwareMonitor. MIT license.
 
 using HardwareMonitorExtension.Services;
+using HardwareMonitorExtension.Localization;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -29,9 +30,9 @@ internal sealed partial class SensorsListPage : ListPage
         _settings = settings;
         _compact = settings.CompactByDefault;
         Icon = new IconInfo("🌡");
-        Title = "硬件监视器";
-        Name = "打开";
-        PlaceholderText = "筛选传感器…";
+        Title = Loc.Current.ListPageTitle;
+        Name = Loc.Current.ListPageAction;
+        PlaceholderText = Loc.Current.SearchPlaceholder;
         EnsureHubHook();
     }
 
@@ -118,7 +119,7 @@ internal sealed partial class SensorsListPage : ListPage
 
         // Compact：每组温度尽量 3 条 + 负载 + 功率；绝不丢掉 CPU 温度
         var result = new List<SensorReading>();
-        foreach (var g in new[] { "处理器", "显卡", "存储", "主板", "内存", "电池", "网络", "其他" })
+        foreach (var g in new[] { HardwareGroups.Processor, HardwareGroups.Graphics, HardwareGroups.Storage, HardwareGroups.Motherboard, HardwareGroups.Memory, HardwareGroups.Battery, HardwareGroups.Network, HardwareGroups.Other, "处理器", "显卡", "存储", "主板", "内存", "电池", "网络", "其他" })
         {
             var temps = sensors.Where(s => s.Group == g && s.Kind == SensorKind.Temperature).ToList();
             result.AddRange(temps.Count <= 3 ? temps : temps.Take(3));
@@ -129,8 +130,8 @@ internal sealed partial class SensorsListPage : ListPage
         }
 
         // 若过滤后没有处理器温度，退回包含全部处理器温度
-        if (!result.Any(s => s.Group == "处理器" && s.Kind == SensorKind.Temperature))
-            result.InsertRange(0, sensors.Where(s => s.Group == "处理器" && s.Kind == SensorKind.Temperature));
+        if (!result.Any(s => (s.Group == HardwareGroups.Processor || s.Group == "处理器") && s.Kind == SensorKind.Temperature))
+            result.InsertRange(0, sensors.Where(s => (s.Group == HardwareGroups.Processor || s.Group == "处理器") && s.Kind == SensorKind.Temperature));
 
         // 其它分组漏网项：附加 Other/风扇等，避免丢指标
         foreach (var s in sensors)
@@ -161,7 +162,7 @@ internal sealed partial class SensorsListPage : ListPage
         // 数值 Title（短）+ 名称 Subtitle，长 Identifier 不会挤掉读数
         item.Title = sensor.FormatListTitle();
         item.Subtitle = stale
-            ? $"{sensor.ShortLabel} · {sensor.Name} · 可能过期"
+            ? $"{sensor.ShortLabel} · {sensor.Name}{Loc.Current.StaleSuffix}"
             : $"{sensor.ShortLabel} · {sensor.Name}";
 
         var nextIcon = IconKey(sensor);
@@ -204,12 +205,12 @@ internal sealed partial class SensorsListPage : ListPage
         [
             new CommandContextItem(new TogglePinSensorCommand(_hub, sensorId))
             {
-                Title = "固定到快捷栏 / 取消固定",
+                Title = Loc.Current.PinToggleName,
                 Icon = new IconInfo("📌"),
             },
             new CommandContextItem(new SensorChartPage(_hub, sensorId))
             {
-                Title = "查看趋势图",
+                Title = Loc.Current.ViewChartName,
                 Icon = new IconInfo("📈"),
             },
         ];
@@ -222,7 +223,7 @@ internal sealed partial class SensorsListPage : ListPage
         var pinCount = _hub.Pinned?.Ids.Count ?? 0;
         var tempCount = snap.Sensors.Count(s => s.Kind == SensorKind.Temperature);
 
-        _footerItem.Title = $"{snap.Sensors.Count} 项 · 温度 {tempCount} · 已固定 {pinCount} · 峰值 {Math.Round(peak)}°C{ThresholdPolicy.Marker(level)}";
+        _footerItem.Title = Loc.Current.ListFooter(snap.Sensors.Count, tempCount, pinCount, peak, ThresholdPolicy.Marker(level));
         _footerItem.Subtitle = $"{_hub.BackendLabel} · {snap.Timestamp:HH:mm:ss}";
         _footerItem.Icon = new IconInfo("↻");
     }

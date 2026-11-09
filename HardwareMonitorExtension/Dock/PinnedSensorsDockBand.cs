@@ -2,6 +2,7 @@
 
 using HardwareMonitorExtension.Pages;
 using HardwareMonitorExtension.Services;
+using HardwareMonitorExtension.Localization;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
 namespace HardwareMonitorExtension.Dock;
@@ -20,7 +21,7 @@ public sealed partial class PinnedSensorsDockBand : WrappedDockItem, IDisposable
     private bool _hooked;
 
     public PinnedSensorsDockBand(SensorHub hub)
-        : base([], "hardwaremonitor.pinned_band", "硬件读数")
+        : base([], "hardwaremonitor.pinned_band", Loc.Current.DockBandTitle)
     {
         _hub = hub;
         Icon = new IconInfo("🌡");
@@ -79,7 +80,7 @@ public sealed partial class PinnedSensorsDockBand : WrappedDockItem, IDisposable
         if (sensor is null)
         {
             item.Title = "--";
-            item.Subtitle = "暂无数据";
+            item.Subtitle = Loc.Current.NoDataSubtitle;
             item.Icon = new IconInfo("🌡");
             return;
         }

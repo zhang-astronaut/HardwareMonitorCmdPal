@@ -2,6 +2,7 @@
 
 using System.Diagnostics;
 using System.Management;
+using HardwareMonitorExtension.Localization;
 using LibreHardwareMonitor.Hardware;
 
 namespace HardwareMonitorExtension.Services;
@@ -16,7 +17,7 @@ public sealed partial class SensorService : IDisposable
     private readonly SemaphoreSlim _gate = new(1, 1);
     private bool _lhmReady;
     private Computer? _computer;
-    private string _backendLabel = "初始化中";
+    private string _backendLabel = Loc.Current.BackendInitializing;
     private bool _disposed;
     private int _sampleFailures;
 
@@ -42,10 +43,10 @@ public sealed partial class SensorService : IDisposable
     {
         var pawn = PawnIoLocator.FindInstallDirectory();
         if (!lhm)
-            return pawn is null ? "LHM 打开失败 · 无 PawnIO" : "LHM 打开失败 · PawnIO 已安装";
+            return pawn is null ? Loc.Current.BackendLhmFailNoPawn : Loc.Current.BackendLhmFailPawn;
         return pawn is null
-            ? "LibreHardwareMonitor（无 PawnIO）"
-            : "LibreHardwareMonitor + PawnIO 已安装";
+            ? Loc.Current.BackendLhmNoPawn
+            : Loc.Current.BackendLhmWithPawn;
     }
 
     private bool TryOpenLibreHardwareMonitor()
@@ -177,15 +178,15 @@ public sealed partial class SensorService : IDisposable
         }
 
         // CPU 占用兜底（若 LHM 未给出）
-        if (!list.Any(s => s.Kind == SensorKind.Load && s.Group == "处理器"))
+        if (!list.Any(s => s.Kind == SensorKind.Load && (s.Group == HardwareGroups.Processor || s.Group == "处理器")))
         {
             var cpuLoad = TryReadCpuCounter();
             if (cpuLoad is not null)
             {
                 list.Add(new SensorReading(
                     "perf:cpu-total",
-                    "处理器",
-                    "CPU 占用",
+                    HardwareGroups.Processor,
+                    Loc.Current.CpuTotalLoad,
                     "PerformanceCounter",
                     SensorKind.Load,
                     cpuLoad.Value,
@@ -214,20 +215,20 @@ public sealed partial class SensorService : IDisposable
             // 直接丢弃无效读数，避免界面显示误导性的 0°C。
             list.RemoveAll(s =>
                 s.Kind == SensorKind.Temperature &&
-                s.Group == "处理器" &&
+                (s.Group == HardwareGroups.Processor || s.Group == "处理器") &&
                 s.Value <= 0);
             return;
         }
 
         // 替换优先级：封装/Tctl/Tdie > 第一个 CPU 温度项 > 新增
         var idx = list.FindIndex(s =>
-            s.Kind == SensorKind.Temperature && s.Group == "处理器" &&
+            s.Kind == SensorKind.Temperature && (s.Group == HardwareGroups.Processor || s.Group == "处理器") &&
             (s.Name.Contains("Package", StringComparison.OrdinalIgnoreCase) ||
              s.Name.Contains("Tctl", StringComparison.OrdinalIgnoreCase) ||
              s.Name.Contains("Tdie", StringComparison.OrdinalIgnoreCase)));
         if (idx < 0)
             idx = list.FindIndex(s =>
-                s.Kind == SensorKind.Temperature && s.Group == "处理器");
+                s.Kind == SensorKind.Temperature && (s.Group == HardwareGroups.Processor || s.Group == "处理器"));
 
         if (idx >= 0)
         {
@@ -241,23 +242,23 @@ public sealed partial class SensorService : IDisposable
         {
             list.Add(new SensorReading(
                 "helper:cpu-tctl",
-                "处理器",
-                "CPU 封装温度 (Tctl)",
+                HardwareGroups.Processor,
+                Loc.Current.CpuPackageTemp,
                 "Elevated helper · LHM",
                 SensorKind.Temperature,
                 elevated.Value,
                 "°C",
                 "CPU",
-                "CPU 封装",
+                Loc.Current.CpuPackage,
                 null));
         }
     }
 
     private static void FixupCpuPower(List<SensorReading> list)
     {
-        var load = list.FirstOrDefault(s => s.Kind == SensorKind.Load && s.Group == "处理器")?.Value ?? 15.0;
+        var load = list.FirstOrDefault(s => s.Kind == SensorKind.Load && (s.Group == HardwareGroups.Processor || s.Group == "处理器"))?.Value ?? 15.0;
         var cpuPower = list
-            .Where(s => s.Kind == SensorKind.Power && s.Group == "处理器")
+            .Where(s => s.Kind == SensorKind.Power && (s.Group == HardwareGroups.Processor || s.Group == "处理器"))
             .ToList();
 
         var hasReal = cpuPower.Any(p => p.Value > 0.5);
@@ -272,7 +273,7 @@ public sealed partial class SensorService : IDisposable
             // 用估算值替换全 0 的功率项
             for (var i = 0; i < list.Count; i++)
             {
-                if (list[i].Kind == SensorKind.Power && list[i].Group == "处理器" && list[i].Value <= 0.5)
+                if (list[i].Kind == SensorKind.Power && (list[i].Group == HardwareGroups.Processor || list[i].Group == "处理器") && list[i].Value <= 0.5)
                 {
                     list[i] = list[i] with
                     {
@@ -288,14 +289,14 @@ public sealed partial class SensorService : IDisposable
         {
             list.Add(new SensorReading(
                 "est:cpu-ppt",
-                "处理器",
-                "CPU 封装功率（估算）",
+                HardwareGroups.Processor,
+                Loc.Current.CpuPackagePowerEst,
                 "Estimated · load×TDP65",
                 SensorKind.Power,
                 est,
                 "W",
                 "CPU",
-                "CPU 功率",
+                Loc.Current.CpuPower,
                 null));
         }
     }
@@ -370,14 +371,14 @@ public sealed partial class SensorService : IDisposable
 
     private static string MapGroup(IHardware hardware) => hardware.HardwareType switch
     {
-        HardwareType.Cpu => "处理器",
-        HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel => "显卡",
-        HardwareType.Storage => "存储",
-        HardwareType.Motherboard => "主板",
-        HardwareType.Memory => "内存",
-        HardwareType.Battery => "电池",
-        HardwareType.Network => "网络",
-        _ => hardware.HardwareType.ToString(),
+        HardwareType.Cpu => HardwareGroups.Processor,
+        HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel => HardwareGroups.Graphics,
+        HardwareType.Storage => HardwareGroups.Storage,
+        HardwareType.Motherboard => HardwareGroups.Motherboard,
+        HardwareType.Memory => HardwareGroups.Memory,
+        HardwareType.Battery => HardwareGroups.Battery,
+        HardwareType.Network => HardwareGroups.Network,
+        _ => HardwareGroups.Other,
     };
 
     private static string ShortLabel(IHardware hardware, ISensor sensor)
@@ -445,8 +446,8 @@ public sealed partial class SensorService : IDisposable
                 var name = obj["InstanceName"]?.ToString() ?? "ACPI";
                 list.Add(new SensorReading(
                     $"acpi:{name}",
-                    "主板",
-                    $"ACPI 热区 {name}",
+                    HardwareGroups.Motherboard,
+                    Loc.Current.AcpiThermalZone(name),
                     "WMI · MSAcpi_ThermalZoneTemperature",
                     SensorKind.Temperature,
                     c,
@@ -466,8 +467,8 @@ public sealed partial class SensorService : IDisposable
         {
             list.Add(new SensorReading(
                 "perf:cpu-total",
-                "处理器",
-                "CPU 占用",
+                HardwareGroups.Processor,
+                Loc.Current.CpuTotalLoad,
                 "PerformanceCounter",
                 SensorKind.Load,
                 load.Value,
@@ -481,14 +482,14 @@ public sealed partial class SensorService : IDisposable
         {
             list.Add(new SensorReading(
                 "status:none",
-                "状态",
-                "无法读取传感器",
-                "请检查 PawnIO / 管理员权限",
+                Loc.Current.StatusTitle,
+                Loc.Current.StatusCannotRead,
+                Loc.Current.StatusCheckPerms,
                 SensorKind.Other,
                 0,
                 string.Empty,
                 "—",
-                "无数据",
+                Loc.Current.StatusNoData,
                 null));
         }
 
@@ -510,12 +511,14 @@ public sealed partial class SensorService : IDisposable
 
         static int GroupRank(string g) => g switch
         {
-            "处理器" => 0,
-            "显卡" => 1,
-            "存储" => 2,
-            "主板" => 3,
-            "内存" => 4,
-            _ => 9,
+            HardwareGroups.Processor or "处理器" => 0,
+            HardwareGroups.Graphics or "显卡" => 1,
+            HardwareGroups.Storage or "存储" => 2,
+            HardwareGroups.Motherboard or "主板" => 3,
+            HardwareGroups.Memory or "内存" => 4,
+            HardwareGroups.Battery or "电池" => 5,
+            HardwareGroups.Network or "网络" => 6,
+            _ => 99,
         };
 
         return list

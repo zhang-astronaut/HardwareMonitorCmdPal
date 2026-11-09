@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using HardwareMonitorExtension.Services;
+using HardwareMonitorExtension.Localization;
 
 namespace HardwareMonitorExtension.Services;
 
@@ -31,7 +32,7 @@ public static class ChartRenderer
         if (points.Count < 2)
         {
             using var emptyFont = new Font("Segoe UI", 12f, FontStyle.Regular, GraphicsUnit.Pixel);
-            g.DrawString("采样点不足，正在积累…", emptyFont, Brushes.Gold, 16, 16);
+            g.DrawString(Loc.Current.ChartNotEnoughPoints, emptyFont, Brushes.Gold, 16, 16);
             return EncodePng(bmp);
         }
 
@@ -75,8 +76,8 @@ public static class ChartRenderer
         // threshold lines for temperature
         if (isTemperature)
         {
-            DrawThreshold(g, ThresholdPolicy.HotC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 140, 66), "过热");
-            DrawThreshold(g, ThresholdPolicy.CriticalC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 90, 90), "危险");
+            DrawThreshold(g, ThresholdPolicy.HotC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 140, 66), Loc.Current.ChartHotLabel);
+            DrawThreshold(g, ThresholdPolicy.CriticalC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 90, 90), Loc.Current.ChartCritLabel);
         }
 
         var pts = new PointF[points.Count];
@@ -117,7 +118,7 @@ public static class ChartRenderer
         using var dotBrush = new SolidBrush(lineColor);
         g.FillEllipse(dotBrush, pts[^1].X - 4, pts[^1].Y - 4, 8, 8);
 
-        g.DrawString($"当前 {last:0}{unit}  ·  区间 {minV:0}–{maxV:0}  ·  点数 {points.Count}",
+        g.DrawString(Loc.Current.ChartRange(last, unit, minV, maxV, points.Count),
             labelFont, Brushes.Gainsboro, padL, height - 20);
 
         return EncodePng(bmp);

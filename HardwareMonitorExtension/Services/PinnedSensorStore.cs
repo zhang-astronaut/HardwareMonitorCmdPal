@@ -109,11 +109,11 @@ public sealed class PinnedSensorStore
             }
 
             // CPU 封装温度优先；GPU 取首条温度
-            AddPreferred(list.Where(s => s.Group == "处理器" && s.Kind == SensorKind.Temperature)
-                .OrderByDescending(s => s.ShortLabel.Contains("封装", StringComparison.Ordinal)), 1);
-            AddPreferred(list.Where(s => s.Group == "处理器" && s.Kind == SensorKind.Load), 1);
-            AddPreferred(list.Where(s => s.Group == "显卡" && s.Kind == SensorKind.Temperature), 1);
-            AddPreferred(list.Where(s => s.Group == "显卡" && s.Kind == SensorKind.Load), 1);
+            AddPreferred(list.Where(s => (s.Group == HardwareGroups.Processor || s.Group == "处理器") && s.Kind == SensorKind.Temperature)
+                .OrderByDescending(s => s.ShortLabel.Contains("封装", StringComparison.OrdinalIgnoreCase) || s.ShortLabel.Contains("Package", StringComparison.OrdinalIgnoreCase)), 1);
+            AddPreferred(list.Where(s => (s.Group == HardwareGroups.Processor || s.Group == "处理器") && s.Kind == SensorKind.Load), 1);
+            AddPreferred(list.Where(s => (s.Group == HardwareGroups.Graphics || s.Group == "显卡") && s.Kind == SensorKind.Temperature), 1);
+            AddPreferred(list.Where(s => (s.Group == HardwareGroups.Graphics || s.Group == "显卡") && s.Kind == SensorKind.Load), 1);
 
             // 机器缺 GPU/读数异常时兜底，保证 Dock 不空
             if (picks.Count < 2)

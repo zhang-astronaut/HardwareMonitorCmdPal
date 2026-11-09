@@ -78,11 +78,11 @@ public static class DashboardHost
     private const string FallbackHtml =
         """
         <!DOCTYPE html>
-        <html lang="zh-CN"><head><meta charset="utf-8"><title>Hardware Monitor</title>
+        <html lang="en"><head><meta charset="utf-8"><title>Hardware Monitor</title>
         <style>body{font:14px/1.5 Segoe UI,sans-serif;background:#0b0d10;color:#e8eef7;padding:24px}
         </style></head><body>
         <h1>Hardware Monitor</h1>
-        <p>完整看板未随包释放，请将项目中的 <code>index.html</code> 复制到本目录。</p>
+        <p>Full dashboard assets not extracted. Please copy <code>index.html</code> from the project to this folder.</p>
         </body></html>
         """;
 }

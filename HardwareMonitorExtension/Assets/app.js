@@ -1,8 +1,236 @@
-// Hardware Monitor · 数据看板
+// Hardware Monitor · 数据看板 / Dashboard
 // 优先读取扩展写出的 live-data.js（window.__HW_LIVE__）；无真实快照时用本地演示数据。
+// Extensible LOCALES registry, browser auto-detect, dynamic perspective hover switching,
+// and bi-directional group normalization.
 
 (() => {
   "use strict";
+
+  const LOCALES = {
+    "en-US": {
+      code: "en-US",
+      nativeName: "English (US)",
+      names: {
+        "en-US": "English (US)",
+        "zh-CN": "英语 (美国)",
+        "ja-JP": "英語 (米国)",
+      },
+      desc: "English (US)",
+      strings: {
+        metaInit: "Real-time sampling · Preparing...",
+        metaLive: "Live data · PawnIO/LHM",
+        metaDemo: "Demo data (no live-data.js detected)",
+        metaPaused: "Paused",
+        metaUpdated: "Updated",
+        metaItems: "items",
+        metaStale: "Live data paused (keep extension running) · Last ",
+        stress: "Stress",
+        pause: "Pause",
+        resume: "Resume",
+        dockTitle: "Command Palette · Dock",
+        allSensors: "All Sensors",
+        groupStorage: "Storage",
+        groupMisc: "Motherboard / Fan / Memory",
+        detailedMetrics: "Detailed Metrics",
+        tableNote: "Click row to switch primary chart",
+        thSensor: "Sensor",
+        thGroup: "Group",
+        thKind: "Kind",
+        thCurrent: "Current",
+        thSource: "Source",
+        pin: "Pin",
+        pinned: "Pinned",
+        points: "pts",
+        kpi: {
+          cpuTemp: "CPU Temp",
+          cpuPower: "CPU Power",
+          cpuLoad: "CPU Load",
+          gpuTemp: "GPU Temp",
+          diskTemp: "SSD Temp",
+          fan: "Fan",
+          motherboard: "Motherboard",
+          memory: "Memory",
+        },
+        groups: {
+          Processor: "Processor",
+          Graphics: "Graphics",
+          Storage: "Storage",
+          Motherboard: "Motherboard",
+          Memory: "Memory",
+          Battery: "Battery",
+          Network: "Network",
+          Other: "Other",
+        },
+      },
+    },
+    "zh-CN": {
+      code: "zh-CN",
+      nativeName: "简体中文",
+      names: {
+        "en-US": "Chinese (Simplified)",
+        "zh-CN": "简体中文",
+        "ja-JP": "中国語 (簡体字)",
+      },
+      desc: "Chinese (Simplified)",
+      strings: {
+        metaInit: "实时采样 · 准备中…",
+        metaLive: "真实数据 · PawnIO/LHM",
+        metaDemo: "演示数据（未检测到 live-data.js）",
+        metaPaused: "已暂停",
+        metaUpdated: "更新",
+        metaItems: "项",
+        metaStale: "真实数据已停更（请保持扩展运行）· 最后 ",
+        stress: "压测",
+        pause: "暂停",
+        resume: "恢复",
+        dockTitle: "命令面板 · Dock",
+        allSensors: "全部读数",
+        groupStorage: "存储",
+        groupMisc: "主板 / 风扇 / 内存",
+        detailedMetrics: "明细表",
+        tableNote: "点击行可切换主图",
+        thSensor: "指标",
+        thGroup: "分组",
+        thKind: "类型",
+        thCurrent: "当前值",
+        thSource: "来源",
+        pin: "固定",
+        pinned: "已固定",
+        points: "点",
+        kpi: {
+          cpuTemp: "CPU 温",
+          cpuPower: "CPU 功率",
+          cpuLoad: "CPU 占用",
+          gpuTemp: "GPU 温",
+          diskTemp: "SSD 温",
+          fan: "风扇",
+          motherboard: "主板",
+          memory: "内存",
+        },
+        groups: {
+          Processor: "处理器",
+          Graphics: "显卡",
+          Storage: "存储",
+          Motherboard: "主板",
+          Memory: "内存",
+          Battery: "电池",
+          Network: "网络",
+          Other: "其他",
+        },
+      },
+    },
+    "ja-JP": {
+      code: "ja-JP",
+      nativeName: "日本語",
+      names: {
+        "en-US": "Japanese",
+        "zh-CN": "日语",
+        "ja-JP": "日本語",
+      },
+      desc: "Japanese",
+      strings: {
+        metaInit: "リアルタイム サンプリング · 準備中…",
+        metaLive: "リアルデータ · PawnIO/LHM",
+        metaDemo: "デモ データ（live-data.js 未検出）",
+        metaPaused: "一時停止中",
+        metaUpdated: "更新",
+        metaItems: "項目",
+        metaStale: "リアルデータ更新停止（拡張機能を実行したままにしてください）· 最終 ",
+        stress: "負荷テスト",
+        pause: "一時停止",
+        resume: "再開",
+        dockTitle: "コマンド パレット · Dock",
+        allSensors: "すべての測定値",
+        groupStorage: "ストレージ",
+        groupMisc: "マザーボード / ファン / メモリ",
+        detailedMetrics: "詳細テーブル",
+        tableNote: "行をクリックしてメイン グラフを切り替え",
+        thSensor: "センサー",
+        thGroup: "グループ",
+        thKind: "種類",
+        thCurrent: "現在値",
+        thSource: "ソース",
+        pin: "固定",
+        pinned: "固定済み",
+        points: "件",
+        kpi: {
+          cpuTemp: "CPU 温度",
+          cpuPower: "CPU 電力",
+          cpuLoad: "CPU 使用率",
+          gpuTemp: "GPU 温度",
+          diskTemp: "SSD 温度",
+          fan: "ファン",
+          motherboard: "マザーボード",
+          memory: "メモリ",
+        },
+        groups: {
+          Processor: "プロセッサ",
+          Graphics: "グラフィックス",
+          Storage: "ストレージ",
+          Motherboard: "マザーボード",
+          Memory: "メモリ",
+          Battery: "バッテリー",
+          Network: "ネットワーク",
+          Other: "その他",
+        },
+      },
+    },
+  };
+
+  function detectLocale() {
+    const saved = localStorage.getItem("hw_locale");
+    if (saved && LOCALES[saved]) return saved;
+    const nav = ((navigator.languages && navigator.languages[0]) || navigator.language || "").toLowerCase();
+    if (nav.startsWith("zh")) return "zh-CN";
+    if (nav.startsWith("ja")) return "ja-JP";
+    return "en-US";
+  }
+
+  function canonicalGroup(g) {
+    const s = String(g || "").trim();
+    switch (s) {
+      case "プロセッサ":
+      case "处理器":
+      case "Processor":
+      case "CPU":
+        return "Processor";
+      case "グラフィックス":
+      case "显卡":
+      case "Graphics":
+      case "GPU":
+        return "Graphics";
+      case "ストレージ":
+      case "存储":
+      case "Storage":
+      case "Disk":
+        return "Storage";
+      case "マザーボード":
+      case "主板":
+      case "Motherboard":
+        return "Motherboard";
+      case "メモリ":
+      case "内存":
+      case "Memory":
+      case "RAM":
+        return "Memory";
+      case "バッテリー":
+      case "电池":
+      case "Battery":
+        return "Battery";
+      case "ネットワーク":
+      case "网络":
+      case "Network":
+        return "Network";
+      default:
+        return "Other";
+    }
+  }
+
+  function localizedGroupName(g, locale) {
+    const key = canonicalGroup(g);
+    const loc = LOCALES[locale] || LOCALES["en-US"];
+    return (loc.strings.groups && loc.strings.groups[key]) || key;
+  }
 
   const N = 90;
   const TH = { warm: 70, hot: 80, crit: 90 };
@@ -18,25 +246,32 @@
     return { id, group, name, short, kind, unit, value, source, history: [], drift: kind === "temperature" ? 0.8 : 1.5 };
   }
 
-  const demoSensors = () => [
-    mk("cpu-pkg", "处理器", "CPU 封装温度", "CPU 封装", "temperature", "°C", 48, "demo · 模拟"),
-    mk("cpu-core", "处理器", "CPU 核心均温", "CPU 核心", "temperature", "°C", 46, "demo · 模拟"),
-    mk("cpu-load", "处理器", "CPU 总占用", "CPU", "load", "%", 18, "demo · 模拟"),
-    mk("cpu-ppt", "处理器", "CPU 封装功率", "CPU 功率", "power", "W", 28, "demo · 模拟"),
-    mk("cpu-freq", "处理器", "CPU 核心频率", "CPU 频率", "clock", "MHz", 3200, "demo · 模拟"),
-    mk("gpu-core", "显卡", "GPU 核心温度", "GPU 核心", "temperature", "°C", 44, "demo · 模拟"),
-    mk("gpu-hot", "显卡", "GPU Hot Spot", "GPU 热点", "temperature", "°C", 52, "demo · 模拟"),
-    mk("gpu-load", "显卡", "GPU 核心占用", "GPU", "load", "%", 12, "demo · 模拟"),
-    mk("gpu-power", "显卡", "GPU 功耗", "GPU 功率", "power", "W", 22, "demo · 模拟"),
-    mk("ssd-temp", "存储", "SSD 温度", "SSD 温度", "temperature", "°C", 37, "demo · 模拟"),
-    mk("ssd-read", "存储", "SSD 读取速率", "SSD 读", "data", "MB/s", 12, "demo · 模拟"),
-    mk("mb-temp", "主板", "主板温度", "主板", "temperature", "°C", 35, "demo · 模拟"),
-    mk("cpu-fan", "主板", "CPU 风扇转速", "CPU 风扇", "fan", "RPM", 900, "demo · 模拟"),
-    mk("mem-load", "内存", "内存占用", "内存", "load", "%", 42, "demo · 模拟"),
-  ];
+  const demoSensors = (locale) => {
+    const isZh = locale && locale.startsWith("zh");
+    const isJa = locale && locale.startsWith("ja");
+    return [
+      mk("cpu-pkg", "Processor", isZh ? "CPU 封装温度" : isJa ? "CPU パッケージ温度" : "CPU Package Temperature", isZh ? "CPU 封装" : isJa ? "CPU パッケージ" : "CPU Package", "temperature", "°C", 48, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("cpu-core", "Processor", isZh ? "CPU 核心均温" : isJa ? "CPU コア平均温度" : "CPU Core Average", isZh ? "CPU 核心" : isJa ? "CPU コア" : "CPU Core", "temperature", "°C", 46, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("cpu-load", "Processor", isZh ? "CPU 总占用" : isJa ? "CPU 合計使用率" : "CPU Total Load", "CPU", "load", "%", 18, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("cpu-ppt", "Processor", isZh ? "CPU 封装功率" : isJa ? "CPU パッケージ電力" : "CPU Package Power", isZh ? "CPU 功率" : isJa ? "CPU 電力" : "CPU Power", "power", "W", 28, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("cpu-freq", "Processor", isZh ? "CPU 核心频率" : isJa ? "CPU クロック周波数" : "CPU Frequency", isZh ? "CPU 频率" : isJa ? "CPU クロック" : "CPU Clock", "clock", "MHz", 3200, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("gpu-core", "Graphics", isZh ? "GPU 核心温度" : isJa ? "GPU コア温度" : "GPU Core Temperature", isZh ? "GPU 核心" : isJa ? "GPU コア" : "GPU Core", "temperature", "°C", 44, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("gpu-hot", "Graphics", isZh ? "GPU Hot Spot" : isJa ? "GPU ホットスポット" : "GPU Hot Spot", isZh ? "GPU 热点" : isJa ? "GPU ホットスポット" : "GPU Hotspot", "temperature", "°C", 52, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("gpu-load", "Graphics", isZh ? "GPU 核心占用" : isJa ? "GPU コア使用率" : "GPU Core Load", "GPU", "load", "%", 12, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("gpu-power", "Graphics", isZh ? "GPU 功耗" : isJa ? "GPU 消費電力" : "GPU Power", isZh ? "GPU 功率" : isJa ? "GPU 電力" : "GPU Power", "power", "W", 22, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("ssd-temp", "Storage", isZh ? "SSD 温度" : isJa ? "SSD 温度" : "SSD Temperature", isZh ? "SSD 温度" : isJa ? "SSD 温度" : "SSD Temp", "temperature", "°C", 37, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("ssd-read", "Storage", isZh ? "SSD 读取速率" : isJa ? "SSD 読み取り速度" : "SSD Read Rate", isZh ? "SSD 读" : isJa ? "SSD 読取" : "SSD Read", "data", "MB/s", 12, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("mb-temp", "Motherboard", isZh ? "主板温度" : isJa ? "マザーボード温度" : "Motherboard Temperature", isZh ? "主板" : isJa ? "マザーボード" : "Motherboard", "temperature", "°C", 35, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("cpu-fan", "Motherboard", isZh ? "CPU 风扇转速" : isJa ? "CPU ファン回転数" : "CPU Fan Speed", isZh ? "CPU 风扇" : isJa ? "CPU ファン" : "CPU Fan", "fan", "RPM", 900, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+      mk("mem-load", "Memory", isZh ? "内存占用" : isJa ? "メモリ使用率" : "Memory Load", isZh ? "内存" : isJa ? "メモリ" : "Memory", "load", "%", 42, isZh ? "demo · 模拟" : isJa ? "demo · シミュレーション" : "demo · Simulated"),
+    ];
+  };
 
+  const initialLocale = detectLocale();
   const state = {
-    sensors: demoSensors(),
+    currentLocale: initialLocale,
+    committedLocale: initialLocale,
+    sensors: demoSensors(initialLocale),
     live: false,
     lastLiveTs: 0,
     selected: null,
@@ -73,7 +308,7 @@
 
   function shortOf(s) {
     if (s.short) return s.short;
-    const n = s.name || s.id || "读数";
+    const n = s.name || s.id || "Sensor";
     return n.length > 10 ? n.slice(0, 10) : n;
   }
 
@@ -83,7 +318,7 @@
 
     const next = live.sensors.map((s) => ({
       id: s.id,
-      group: s.group || "其他",
+      group: s.group || "Other",
       name: s.name || s.id,
       short: shortOf(s),
       kind: normalizeKind(s.kind),
@@ -128,8 +363,10 @@
       if (applyLive()) render();
       // 若扩展停止写入超过 8s，标记为过期但仍显示最后快照
       if (state.live && Date.now() - state.lastLiveTs > 8000) {
-        $("metaLine").textContent = "真实数据已停更（请保持扩展运行）· 最后 " +
-          (state.last ? state.last.toLocaleTimeString("zh-CN", { hour12: false }) : "—");
+        const loc = LOCALES[state.currentLocale] || LOCALES["en-US"];
+        const t = loc.strings;
+        const timeStr = state.last ? state.last.toLocaleTimeString(state.currentLocale, { hour12: false }) : "—";
+        $("metaLine").textContent = `${t.metaStale}${timeStr}`;
       }
     };
     tag.onerror = () => { /* 无真实文件，继续演示 */ };
@@ -308,7 +545,8 @@
     drawSeries(g.ctx, s.history, color, g.w, g.h, 8, forced);
     $("chartTitle").textContent = s.name;
     const mn = Math.min(...s.history), mx = Math.max(...s.history);
-    $("chartStats").textContent = `${fmt(s)} · ${mn.toFixed(0)}–${mx.toFixed(0)} · ${s.history.length} 点`;
+    const loc = LOCALES[state.currentLocale] || LOCALES["en-US"];
+    $("chartStats").textContent = `${fmt(s)} · ${mn.toFixed(0)}–${mx.toFixed(0)} · ${s.history.length} ${loc.strings.points}`;
     $("chartLegend").innerHTML = `<span><i style="background:${color}"></i>${s.short}</span><span>${s.source}</span>`;
   }
 
@@ -325,10 +563,11 @@
 
   function rowHtml(s) {
     const lv = s.kind === "temperature" ? heat(s.value) : "";
+    const grp = localizedGroupName(s.group, state.currentLocale);
     return `<div class="row ${lv} ${s.id === state.selected ? "sel" : ""}" data-id="${s.id}">
       <div>
         <div class="name">${s.short}</div>
-        <div class="sub">${s.group} · ${s.source}</div>
+        <div class="sub">${grp} · ${s.source}</div>
       </div>
       <div class="val">${fmt(s)}</div>
     </div>`;
@@ -336,36 +575,52 @@
 
   function pick(id) { return state.sensors.find((s) => s.id === id); }
   function pickByGroup(group, kind, n) {
-    return state.sensors.filter((s) => s.group === group && (!kind || s.kind === kind)).slice(0, n);
+    const targetCanon = canonicalGroup(group);
+    return state.sensors.filter((s) => canonicalGroup(s.group) === targetCanon && (!kind || s.kind === kind)).slice(0, n);
+  }
+
+  function applyI18n(locale) {
+    const loc = LOCALES[locale] || LOCALES["en-US"];
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      if (loc.strings[key]) {
+        el.textContent = loc.strings[key];
+      }
+    });
+    $("currentLangLabel").textContent = loc.nativeName;
+    document.documentElement.lang = locale;
   }
 
   function render() {
-    const cpuT = pick("cpu-pkg") || state.sensors.find((s) => s.kind === "temperature");
-    const cpuP = pick("cpu-ppt") || state.sensors.find((s) => s.kind === "power");
-    const cpuL = pick("cpu-load") || state.sensors.find((s) => s.kind === "load");
-    const gpuT = pick("gpu-core") || pickByGroup("显卡", "temperature")[0];
-    const diskT = pick("ssd-temp") || pickByGroup("存储", "temperature")[0];
+    const loc = LOCALES[state.currentLocale] || LOCALES["en-US"];
+    const t = loc.strings;
+
+    const cpuT = pick("cpu-pkg") || state.sensors.find((s) => s.kind === "temperature" && canonicalGroup(s.group) === "Processor");
+    const cpuP = pick("cpu-ppt") || state.sensors.find((s) => s.kind === "power" && canonicalGroup(s.group) === "Processor");
+    const cpuL = pick("cpu-load") || state.sensors.find((s) => s.kind === "load" && canonicalGroup(s.group) === "Processor");
+    const gpuT = pick("gpu-core") || pickByGroup("Graphics", "temperature")[0];
+    const diskT = pick("ssd-temp") || pickByGroup("Storage", "temperature")[0];
     const fan = pick("cpu-fan") || state.sensors.find((s) => s.kind === "fan");
-    const mb = pick("mb-temp") || pickByGroup("主板", "temperature")[0];
-    const mem = pick("mem-load") || pickByGroup("内存", "load")[0];
+    const mb = pick("mb-temp") || pickByGroup("Motherboard", "temperature")[0];
+    const mem = pick("mem-load") || pickByGroup("Memory", "load")[0];
 
     const kpis = [
-      ["CPU 温", cpuT, COLORS.cpu],
-      ["CPU 功率", cpuP, COLORS.power],
-      ["CPU 占用", cpuL, COLORS.load],
-      ["GPU 温", gpuT, COLORS.gpu],
-      ["SSD 温", diskT, COLORS.disk],
-      ["风扇", fan, COLORS.fan],
-      ["主板", mb, COLORS.board],
-      ["内存", mem, COLORS.mem],
+      [t.kpi.cpuTemp, cpuT, COLORS.cpu],
+      [t.kpi.cpuPower, cpuP, COLORS.power],
+      [t.kpi.cpuLoad, cpuL, COLORS.load],
+      [t.kpi.gpuTemp, gpuT, COLORS.gpu],
+      [t.kpi.diskTemp, diskT, COLORS.disk],
+      [t.kpi.fan, fan, COLORS.fan],
+      [t.kpi.motherboard, mb, COLORS.board],
+      [t.kpi.memory, mem, COLORS.mem],
     ];
     $("kpis").innerHTML = kpis.map(([label, s, c]) =>
       `<div class="kpi"><b style="color:${c}">${s ? fmt(s) : "—"}</b><small>${label}</small></div>`
     ).join("");
 
-    const mode = state.live ? "真实数据 · PawnIO/LHM" : "演示数据（未检测到 live-data.js）";
-    $("metaLine").textContent = (state.last ? `更新 ${state.last.toLocaleTimeString("zh-CN", { hour12: false })} · ` : "") +
-      `${state.sensors.length} 项 · ${mode}${state.paused ? " · 已暂停" : ""}`;
+    const mode = state.live ? t.metaLive : t.metaDemo;
+    const lastTime = state.last ? `${t.metaUpdated} ${state.last.toLocaleTimeString(state.currentLocale, { hour12: false })} · ` : "";
+    $("metaLine").textContent = `${lastTime}${state.sensors.length} ${t.metaItems} · ${mode}${state.paused ? " · " + t.metaPaused : ""}`;
     $("listCount").textContent = String(state.sensors.length);
     $("dockMode").textContent = state.compact ? "Compact" : "Default";
 
@@ -386,9 +641,10 @@
 
     let list = state.sensors;
     if (state.compact) {
+      const allowedGroups = new Set(["Processor", "Graphics", "Storage", "Motherboard", "Memory"]);
       list = state.sensors.filter((s) =>
         ["temperature", "load", "power"].includes(s.kind) &&
-        ["处理器", "显卡", "存储", "主板", "内存"].includes(s.group)
+        allowedGroups.has(canonicalGroup(s.group))
       ).slice(0, 16);
     }
     $("sensorList").innerHTML = list.map(rowHtml).join("");
@@ -401,24 +657,27 @@
       ).join("");
     };
 
-    const cpuItems = pickByGroup("处理器").slice(0, 6);
+    const cpuItems = pickByGroup("Processor").slice(0, 6);
     drawMini("cpuMini", cpuItems.map((s) => s.id));
     fillRows("cpuRows", cpuItems);
     $("cpuNow").textContent = cpuT ? fmt(cpuT) : "—";
 
-    const gpuItems = pickByGroup("显卡").slice(0, 6);
+    const gpuItems = pickByGroup("Graphics").slice(0, 6);
     drawMini("gpuMini", gpuItems.map((s) => s.id));
     fillRows("gpuRows", gpuItems);
     $("gpuNow").textContent = gpuT ? fmt(gpuT) : "—";
 
-    const diskItems = pickByGroup("存储").slice(0, 6);
+    const diskItems = pickByGroup("Storage").slice(0, 6);
     drawMini("diskMini", diskItems.map((s) => s.id));
     fillRows("diskRows", diskItems);
     $("diskNow").textContent = diskT ? fmt(diskT) : "—";
 
     const miscItems = [
       mb, fan, mem,
-      ...state.sensors.filter((s) => s.group === "主板" || s.group === "内存").slice(0, 6)
+      ...state.sensors.filter((s) => {
+        const cg = canonicalGroup(s.group);
+        return cg === "Motherboard" || cg === "Memory";
+      }).slice(0, 6)
     ].filter(Boolean);
     const miscUnique = [];
     const seen = new Set();
@@ -429,15 +688,98 @@
 
     $("dataTable").querySelector("tbody").innerHTML = state.sensors.map((s) => {
       const pinned = state.pinned.includes(s.id);
+      const grp = localizedGroupName(s.group, state.currentLocale);
       return `<tr data-id="${s.id}">
         <td>${s.name}</td>
-        <td>${s.group}</td>
+        <td>${grp}</td>
         <td>${s.kind}</td>
         <td class="mono">${fmt(s)}</td>
         <td style="color:var(--muted);font-size:11px">${s.source}</td>
-        <td><button type="button" class="pin ${pinned ? "on" : ""}" data-pin="${s.id}">${pinned ? "已固定" : "固定"}</button></td>
+        <td><button type="button" class="pin ${pinned ? "on" : ""}" data-pin="${s.id}">${pinned ? t.pinned : t.pin}</button></td>
       </tr>`;
     }).join("");
+  }
+
+  function setLocalePerspective(locale) {
+    if (!LOCALES[locale]) return;
+    state.currentLocale = locale;
+    applyI18n(locale);
+    const menu = $("langMenu");
+    if (menu) {
+      menu.querySelectorAll(".dropdown-item").forEach((el) => {
+        el.classList.toggle("active", el.dataset.locale === state.committedLocale);
+        const code = el.dataset.locale;
+        const descEl = el.querySelector(".opt-desc");
+        if (descEl && LOCALES[code] && LOCALES[code].names) {
+          descEl.textContent = LOCALES[code].names[locale] || LOCALES[code].desc;
+        }
+      });
+    }
+    if (!state.live) {
+      const demo = demoSensors(locale);
+      const histMap = new Map(state.sensors.map((s) => [s.id, s.history]));
+      for (const d of demo) {
+        if (histMap.has(d.id)) {
+          d.history = histMap.get(d.id);
+        }
+      }
+      state.sensors = demo;
+    }
+    render();
+  }
+
+  function closeDropdown() {
+    $("langDropdown").classList.remove("open");
+    $("langBtn").setAttribute("aria-expanded", "false");
+    setLocalePerspective(state.committedLocale);
+  }
+
+  function initLangDropdown() {
+    const menu = $("langMenu");
+    menu.innerHTML = Object.keys(LOCALES).map((code) => {
+      const loc = LOCALES[code];
+      const active = code === state.committedLocale;
+      const initialDesc = (loc.names && loc.names[state.committedLocale]) || loc.desc;
+      return `<div class="dropdown-item ${active ? "active" : ""}" data-locale="${code}">
+        <span class="opt-native">${loc.nativeName}</span>
+        <span class="opt-desc">${initialDesc}</span>
+      </div>`;
+    }).join("");
+
+    $("langBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const dd = $("langDropdown");
+      const isOpen = dd.classList.toggle("open");
+      $("langBtn").setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!$("langDropdown").contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    menu.addEventListener("mouseover", (e) => {
+      const item = e.target.closest(".dropdown-item[data-locale]");
+      if (item) {
+        setLocalePerspective(item.dataset.locale);
+      }
+    });
+
+    menu.addEventListener("mouseleave", () => {
+      setLocalePerspective(state.committedLocale);
+    });
+
+    menu.addEventListener("click", (e) => {
+      const item = e.target.closest(".dropdown-item[data-locale]");
+      if (item) {
+        const locCode = item.dataset.locale;
+        state.committedLocale = locCode;
+        localStorage.setItem("hw_locale", locCode);
+        setLocalePerspective(locCode);
+        closeDropdown();
+      }
+    });
   }
 
   function tick() {
@@ -465,7 +807,8 @@
   $("pauseBtn").addEventListener("click", () => {
     state.paused = !state.paused;
     $("pauseBtn").classList.toggle("on", state.paused);
-    $("pauseBtn").textContent = state.paused ? "恢复" : "暂停";
+    const loc = LOCALES[state.currentLocale] || LOCALES["en-US"];
+    $("pauseBtn").textContent = state.paused ? loc.strings.resume : loc.strings.pause;
     render();
   });
   $("sensorList").addEventListener("click", (e) => {
@@ -494,6 +837,9 @@
     if (tr) { state.selected = tr.dataset.id; render(); }
   });
   window.addEventListener("resize", () => render());
+
+  initLangDropdown();
+  setLocalePerspective(state.committedLocale);
 
   // 启动：先试 live，再演示 seed
   if (applyLive()) {
