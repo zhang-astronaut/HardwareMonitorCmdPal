@@ -300,13 +300,3 @@ Dropdown trigger: [ 🌐 English (US) ▾ ]
 | **T-04** | **Dashboard Auto-Detection & Persistence** | Verify browser language detection in web UI. | 1. Launch `index.html` with browser language set to `en-US` → UI defaults to `en-US`.<br>2. Launch with browser language set to `zh-CN` → UI defaults to `zh-Hans`.<br>3. Launch with unsupported locale (e.g. `de-DE`) → defaults to `en-US`.<br>4. Manually switch language → reload page → verify manual choice persists via `localStorage`. |
 | **T-05** | **Dynamic Dropdown Hover Matrix** | Validate dynamic perspective hover behavior. | 1. Open dropdown while `en-US` is active: verify right column shows `English (US)` and `Chinese (Simplified)`.<br>2. Hover over `简体中文`: verify right column dynamically updates to `英语 (美国)` and `简体中文`.<br>3. Move mouse out of menu: verify right column reverts to `en-US` perspective.<br>4. Click `简体中文`: verify UI instantly translates to Chinese and menu closes. |
 | **T-06** | **Telemetry Ingestion & Group Filtering** | Verify live data and fallback demo mode. | 1. In Demo mode: verify all demo sensors, units, and KPIs render in the active language.<br>2. In Live mode with simulated `live-data.js`: verify `pickByGroup` populates mini-charts and data table regardless of language selection. |
-
----
-
-## 6. Review & Sign-Off
-
-The specification header has been updated:
-- **Author**: `zhang-astronaut`
-- **Contributor**: `Nathan Myron, MyronTech Solutions`
-
-All code modifications will be compiled, detailed, and presented for explicit approval before modifying source files.

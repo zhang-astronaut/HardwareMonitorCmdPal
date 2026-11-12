@@ -41,6 +41,8 @@
         pin: "Pin",
         pinned: "Pinned",
         points: "pts",
+        sensorData: "Sensor Data",
+        sensorDataTitle: "Live Sensor Data",
         kpi: {
           cpuTemp: "CPU Temp",
           cpuPower: "CPU Power",
@@ -97,6 +99,8 @@
         pin: "固定",
         pinned: "已固定",
         points: "点",
+        sensorData: "传感器数据",
+        sensorDataTitle: "实时传感器数据",
         kpi: {
           cpuTemp: "CPU 温",
           cpuPower: "CPU 功率",
@@ -153,6 +157,8 @@
         pin: "固定",
         pinned: "固定済み",
         points: "件",
+        sensorData: "センサー データ",
+        sensorDataTitle: "リアルタイム センサー データ",
         kpi: {
           cpuTemp: "CPU 温度",
           cpuPower: "CPU 電力",
@@ -187,43 +193,16 @@
   }
 
   function canonicalGroup(g) {
-    const s = String(g || "").trim();
-    switch (s) {
-      case "プロセッサ":
-      case "处理器":
-      case "Processor":
-      case "CPU":
-        return "Processor";
-      case "グラフィックス":
-      case "显卡":
-      case "Graphics":
-      case "GPU":
-        return "Graphics";
-      case "ストレージ":
-      case "存储":
-      case "Storage":
-      case "Disk":
-        return "Storage";
-      case "マザーボード":
-      case "主板":
-      case "Motherboard":
-        return "Motherboard";
-      case "メモリ":
-      case "内存":
-      case "Memory":
-      case "RAM":
-        return "Memory";
-      case "バッテリー":
-      case "电池":
-      case "Battery":
-        return "Battery";
-      case "ネットワーク":
-      case "网络":
-      case "Network":
-        return "Network";
-      default:
-        return "Other";
-    }
+    const raw = String(g || "").trim();
+    const s = raw.toLowerCase();
+    if (raw === "プロセッサ" || raw === "处理器" || s === "processor" || s === "cpu") return "Processor";
+    if (raw === "グラフィックス" || raw === "显卡" || s === "graphics" || s === "gpu") return "Graphics";
+    if (raw === "ストレージ" || raw === "存储" || s === "storage" || s === "disk" || s === "ssd") return "Storage";
+    if (raw === "マザーボード" || raw === "主板" || s === "motherboard" || s === "mb") return "Motherboard";
+    if (raw === "メモリ" || raw === "内存" || s === "memory" || s === "ram") return "Memory";
+    if (raw === "バッテリー" || raw === "电池" || s === "battery") return "Battery";
+    if (raw === "网络" || raw === "ネットワーク" || s === "network") return "Network";
+    return "Other";
   }
 
   function localizedGroupName(g, locale) {
@@ -275,6 +254,7 @@
     live: false,
     lastLiveTs: 0,
     selected: null,
+    selectedIds: new Set(["cpu-pkg"]),
     pinned: ["cpu-pkg", "cpu-load", "cpu-ppt", "gpu-core", "ssd-temp", "mem-load"],
     compact: false,
     paused: false,
@@ -320,6 +300,7 @@
       id: s.id,
       group: s.group || "Other",
       name: s.name || s.id,
+      hardware: s.hardware || "",
       short: shortOf(s),
       kind: normalizeKind(s.kind),
       unit: s.unit || "",
@@ -344,14 +325,96 @@
       if (s.history.length > N) s.history = s.history.slice(-N);
     }
 
-    state.sensors = next;
+    state.sensors = sortSensors(next);
     state.live = true;
     state.lastLiveTs = Date.now();
     state.last = live.timestamp ? new Date(live.timestamp) : new Date();
-    if (!state.sensors.some((s) => s.id === state.selected))
+    if (!state.sensors.some((s) => state.selectedIds.has(s.id))) {
+      state.selectedIds = new Set([state.sensors[0]?.id || ""]);
       state.selected = state.sensors[0]?.id || null;
+    }
     if (state.pinned.length === 0)
       state.pinned = state.sensors.filter((s) => s.kind === "temperature").slice(0, 6).map((s) => s.id);
+    return true;
+  }
+
+  function sortSensors(sensors) {
+    function groupRank(g) {
+      switch (canonicalGroup(g)) {
+        case "Processor": return 0;
+        case "Memory": return 1;
+        case "Graphics": return 2;
+        case "Storage": return 3;
+        case "Motherboard": return 4;
+        case "Battery": return 5;
+        case "Network": return 6;
+        default: return 99;
+      }
+    }
+    function metricRank(s) {
+      const cg = canonicalGroup(s.group);
+      const k = s.kind;
+      const sh = (s.short || s.name || "").toLowerCase();
+      if (cg === "Processor") {
+        if (k === "temperature") return 0;
+        if (k === "load") return 1;
+        if (k === "power") return 2;
+        if (k === "voltage") return 3;
+        if (k === "clock") return 4;
+        return 5;
+      }
+      if (cg === "Memory") {
+        const isVirt = (s.name || "").toLowerCase().includes("virtual");
+        return (isVirt ? 10 : 0) + (k === "load" ? 0 : 1);
+      }
+      if (cg === "Graphics") {
+        if (k === "temperature") {
+          if (sh.includes("core")) return 0;
+          if (sh.includes("hot") || sh.includes("junction")) return 1;
+          if (sh.includes("mem")) return 2;
+          return 3;
+        }
+        if (k === "load") return 10;
+        if (k === "power") return 11;
+        if (k === "voltage") return 12;
+        if (k === "clock") return 13;
+        if (k === "fan") return 14;
+        return 15;
+      }
+      if (cg === "Storage") {
+        if (sh.includes("temp")) return 0;
+        if (sh.includes("act") && !sh.includes("read") && !sh.includes("write")) return 1;
+        if (sh.includes("read act") || (sh.includes("read") && sh.includes("act"))) return 2;
+        if (sh.includes("read rate") || (sh.includes("read") && !sh.includes("act") && !sh.includes("total"))) return 3;
+        if (sh.includes("write act") || (sh.includes("write") && sh.includes("act"))) return 4;
+        if (sh.includes("write rate") || (sh.includes("write") && !sh.includes("act") && !sh.includes("total"))) return 5;
+        if (sh.includes("used")) return 6;
+        if (sh.includes("free")) return 7;
+        if (sh.includes("total read")) return 8;
+        if (sh.includes("total write")) return 9;
+        return 10;
+      }
+      if (k === "temperature") return 0;
+      if (k === "fan") return 1;
+      if (k === "load") return 2;
+      if (k === "voltage") return 3;
+      return 4;
+    }
+    function driveOrd(s) {
+      if (canonicalGroup(s.group) !== "Storage") return 0;
+      const text = `${s.hardware || ""} ${s.short || ""} ${s.id || ""}`;
+      const m = text.match(/SSD\s*(\d+)/i) || text.match(/\/(?:nvme|storage)\/(\d+)/i);
+      return m ? parseInt(m[1], 10) : 0;
+    }
+    return sensors.slice().sort((a, b) => {
+      const gDiff = groupRank(a.group) - groupRank(b.group);
+      if (gDiff !== 0) return gDiff;
+      const dDiff = driveOrd(a) - driveOrd(b);
+      if (dDiff !== 0) return dDiff;
+      const mDiff = metricRank(a) - metricRank(b);
+      if (mDiff !== 0) return mDiff;
+      return (a.name || "").localeCompare(b.name || "");
+    });
     return true;
   }
 
@@ -380,7 +443,9 @@
       case "clock": return `${Math.round(s.value)} MHz`;
       case "power": return s.value >= 100 ? `${Math.round(s.value)} W` : `${s.value.toFixed(1)} W`;
       case "fan": return `${Math.round(s.value)} RPM`;
-      case "data": return `${s.value.toFixed(1)} ${s.unit || ""}`.trim();
+      case "data":
+        if (s.unit === "GB" && s.value >= 1024) return `${(s.value / 1024).toFixed(1)} TB`;
+        return `${s.value.toFixed(1)} ${s.unit || ""}`.trim();
       case "voltage": return `${s.value.toFixed(2)} V`;
       default: return `${s.value.toFixed(1)}${s.unit ? " " + s.unit : ""}`;
     }
@@ -536,18 +601,44 @@
   }
 
   function drawMain() {
-    const s = state.sensors.find((x) => x.id === state.selected) || state.sensors[0];
-    if (!s) return;
+    const selected = Array.from(state.selectedIds)
+      .map((id) => state.sensors.find((x) => x.id === id))
+      .filter(Boolean);
+    if (selected.length === 0 && state.sensors.length > 0) selected.push(state.sensors[0]);
+    if (selected.length === 0) return;
+
     const g = setupCanvas($("mainChart"), 240);
     grid(g.ctx, g.w, g.h);
-    const color = s.kind === "temperature" ? COLORS.cpu : s.kind === "power" ? COLORS.power : COLORS.load;
-    const forced = stickyRange(s.id, s.history);
-    drawSeries(g.ctx, s.history, color, g.w, g.h, 8, forced);
-    $("chartTitle").textContent = s.name;
-    const mn = Math.min(...s.history), mx = Math.max(...s.history);
-    const loc = LOCALES[state.currentLocale] || LOCALES["en-US"];
-    $("chartStats").textContent = `${fmt(s)} · ${mn.toFixed(0)}–${mx.toFixed(0)} · ${s.history.length} ${loc.strings.points}`;
-    $("chartLegend").innerHTML = `<span><i style="background:${color}"></i>${s.short}</span><span>${s.source}</span>`;
+    const PALETTE = ["#00d4ff", "#ff4d6d", "#00f5d4", "#ffbe0b", "#f72585", "#7209b7", "#4cc9f0", "#52b788"];
+
+    const sameKind = selected.every((s) => s.kind === selected[0].kind);
+    let forced = null;
+    if (sameKind) {
+      const allVals = selected.flatMap((s) => s.history);
+      if (allVals.length > 0) {
+        forced = { min: Math.min(...allVals), max: Math.max(...allVals) };
+        if (forced.max - forced.min < 1) forced.max = forced.min + 1;
+      }
+    }
+
+    selected.forEach((s, i) => {
+      const color = PALETTE[i % PALETTE.length];
+      drawSeries(g.ctx, s.history, color, g.w, g.h, 8, forced || stickyRange(s.id, s.history));
+    });
+
+    if (selected.length === 1) {
+      const s = selected[0];
+      $("chartTitle").textContent = s.name;
+      const mn = Math.min(...s.history), mx = Math.max(...s.history);
+      $("chartStats").textContent = `${fmt(s)} · ${mn.toFixed(0)}–${mx.toFixed(0)} · ${s.history.length} pts`;
+      $("chartLegend").innerHTML = `<span><i style="background:${PALETTE[0]}"></i>${s.short}</span><span>${s.source}</span>`;
+    } else {
+      $("chartTitle").textContent = `${selected.length} Sensors Plotted`;
+      $("chartStats").textContent = selected.map((s) => `${s.short}: ${fmt(s)}`).join(" · ");
+      $("chartLegend").innerHTML = selected.map((s, i) =>
+        `<span><i style="background:${PALETTE[i % PALETTE.length]}"></i>${s.short} (${fmt(s)})</span>`
+      ).join("");
+    }
   }
 
   function drawMini(canvasId, ids) {
@@ -564,7 +655,9 @@
   function rowHtml(s) {
     const lv = s.kind === "temperature" ? heat(s.value) : "";
     const grp = localizedGroupName(s.group, state.currentLocale);
-    return `<div class="row ${lv} ${s.id === state.selected ? "sel" : ""}" data-id="${s.id}">
+    const isSel = state.selectedIds.has(s.id);
+    return `<div class="row ${lv} ${isSel ? "sel" : ""}" data-id="${s.id}">
+      <div class="row-chk ${isSel ? "checked" : ""}" data-chk="${s.id}"></div>
       <div>
         <div class="name">${s.short}</div>
         <div class="sub">${grp} · ${s.source}</div>
@@ -591,17 +684,115 @@
     document.documentElement.lang = locale;
   }
 
+  function findCpuTemperature(sensors) {
+    if (!Array.isArray(sensors) || sensors.length === 0) return null;
+
+    // 1. Direct synthetic or elevated helper IDs
+    const direct = pick("helper:cpu-tctl") || pick("cpu-pkg");
+    if (direct && direct.kind === "temperature") return direct;
+
+    const temps = sensors.filter((s) => s.kind === "temperature");
+    if (temps.length === 0) return null;
+
+    // PRIMARY EXCLUSION FILTER (Evaluated Before Any Candidate Pool)
+    // Rejects RAM, GPU, Storage, Motherboard Bridge/Chipset, VRM & Ambient
+    const isExcluded = (s) => {
+      const cg = canonicalGroup(s.group);
+      if (cg === "Graphics" || cg === "Storage" || cg === "Memory" || cg === "Battery" || cg === "Network") {
+        return true;
+      }
+
+      const n = (s.name + " " + (s.short || "") + " " + s.id).toLowerCase();
+
+      // RAM / Memory sensors
+      if (n.includes("dimm") || n.includes("dram") || n.includes("spd") || n.includes("ram") || n.includes("memory")) {
+        return true;
+      }
+      // GPU / Video / Hotspot sensors
+      if (n.includes("gpu") || n.includes("vram") || n.includes("hotspot")) {
+        return true;
+      }
+      // Storage / NVMe / Drive sensors
+      if (n.includes("ssd") || n.includes("nvme") || n.includes("nand") || n.includes("hdd") || n.includes("drive")) {
+        return true;
+      }
+      // Motherboard Chipset, PCH, Bridge, VRM, System, & Ambient sensors
+      if (n.includes("pch") || n.includes("chipset") || n.includes("bridge") || n.includes("northbridge") || 
+          n.includes("southbridge") || n.includes("vrm") || n.includes("mos") || n.includes("ambient") || 
+          n.includes("system") || n.includes("aux")) {
+        return true;
+      }
+      // Motherboard general readings that do NOT explicitly specify CPU
+      if ((n.includes("mainboard") || n.includes("motherboard") || n.includes("主板") || n.includes("マザーボード")) && !n.includes("cpu")) {
+        return true;
+      }
+
+      return false;
+    };
+
+    // Filter candidate temperatures with exclusions first
+    const validTemps = temps.filter((s) => !isExcluded(s));
+    if (validTemps.length === 0) return null;
+
+    // Candidate Pool 1: Explicit Processor Group
+    const procTemps = validTemps.filter((s) => canonicalGroup(s.group) === "Processor");
+    if (procTemps.length > 0) {
+      // 1A. Package / aggregate / die temperatures (Intel Package, AMD Tctl/Tdie, ARM SoC, or localized)
+      const pkg = procTemps.find((s) => {
+        const n = (s.name + " " + (s.short || "")).toLowerCase();
+        return n.includes("package") || n.includes("tctl") || n.includes("tdie") ||
+               n.includes("soc") || n.includes("total") || n.includes("average") || n.includes("max") ||
+               n.includes("封装") || n.includes("パッケージ");
+      });
+      if (pkg) return pkg;
+
+      // 1B. Any individual core reading in Processor group
+      return procTemps[0];
+    }
+
+    // Candidate Pool 2: SuperIO / Motherboard Diode explicitly for CPU
+    const explicitCpu = validTemps.find((s) => {
+      const n = (s.name + " " + (s.short || "") + " " + s.id).toLowerCase();
+      return n.includes("cpu") || n.includes("processor") || n.includes("peci") || n.includes("soc") ||
+             n.includes("プロセッサ") || n.includes("处理器");
+    });
+    if (explicitCpu) return explicitCpu;
+
+    // Candidate Pool 3: ACPI Thermal Zone explicitly referencing CPU / SoC
+    const acpiCpu = validTemps.find((s) => {
+      const n = (s.name + " " + (s.short || "") + " " + s.id).toLowerCase();
+      return (n.includes("acpi") || n.includes("thermal zone")) && 
+             (n.includes("cpu") || n.includes("tz.cpu") || n.includes("cpuz") || n.includes("soc"));
+    });
+    if (acpiCpu) return acpiCpu;
+
+    return null;
+  }
+
+  function findMotherboardTemperature(sensors) {
+    const mbTemps = sensors.filter((s) => canonicalGroup(s.group) === "Motherboard" && s.kind === "temperature" && s.value > 0);
+    if (mbTemps.length === 0) return null;
+    // Prefer System, Motherboard, Mainboard, Chipset over socket thermistors
+    const preferred = mbTemps.find((s) => {
+      const n = (s.name + " " + (s.short || "")).toLowerCase();
+      return n.includes("system") || n.includes("motherboard") || n.includes("mainboard") ||
+             n.includes("chipset") || n.includes("pch") || n.includes("vrm") ||
+             n.includes("主板") || n.includes("マザーボード");
+    });
+    return preferred || mbTemps[0];
+  }
+
   function render() {
     const loc = LOCALES[state.currentLocale] || LOCALES["en-US"];
     const t = loc.strings;
 
-    const cpuT = pick("cpu-pkg") || state.sensors.find((s) => s.kind === "temperature" && canonicalGroup(s.group) === "Processor");
-    const cpuP = pick("cpu-ppt") || state.sensors.find((s) => s.kind === "power" && canonicalGroup(s.group) === "Processor");
-    const cpuL = pick("cpu-load") || state.sensors.find((s) => s.kind === "load" && canonicalGroup(s.group) === "Processor");
+    const cpuT = findCpuTemperature(state.sensors);
+    const cpuP = pick("cpu-ppt") || state.sensors.find((s) => s.kind === "power" && canonicalGroup(s.group) === "Processor") || state.sensors.find((s) => s.kind === "power" && s.name.toLowerCase().includes("cpu"));
+    const cpuL = pick("cpu-load") || state.sensors.find((s) => s.kind === "load" && canonicalGroup(s.group) === "Processor") || state.sensors.find((s) => s.kind === "load" && s.name.toLowerCase().includes("cpu"));
     const gpuT = pick("gpu-core") || pickByGroup("Graphics", "temperature")[0];
     const diskT = pick("ssd-temp") || pickByGroup("Storage", "temperature")[0];
     const fan = pick("cpu-fan") || state.sensors.find((s) => s.kind === "fan");
-    const mb = pick("mb-temp") || pickByGroup("Motherboard", "temperature")[0];
+    const mb = pick("mb-temp") || findMotherboardTemperature(state.sensors) || pickByGroup("Motherboard", "temperature")[0];
     const mem = pick("mem-load") || pickByGroup("Memory", "load")[0];
 
     const kpis = [
@@ -667,9 +858,53 @@
     fillRows("gpuRows", gpuItems);
     $("gpuNow").textContent = gpuT ? fmt(gpuT) : "—";
 
-    const diskItems = pickByGroup("Storage").slice(0, 6);
-    drawMini("diskMini", diskItems.map((s) => s.id));
-    fillRows("diskRows", diskItems);
+    const storageTemps = pickByGroup("Storage", "temperature");
+    const storageAll = pickByGroup("Storage");
+    drawMini("diskMini", (storageTemps.length > 0 ? storageTemps : storageAll).map((s) => s.id));
+
+    function storageMetricOrder(s) {
+      const sh = (s.short || s.name || "").toLowerCase();
+      if (sh.includes("temp")) return 0;
+      if (sh.includes("act") && !sh.includes("read") && !sh.includes("write")) return 1;
+      if (sh.includes("read act") || (sh.includes("read") && sh.includes("act"))) return 2;
+      if (sh.includes("read rate") || (sh.includes("read") && !sh.includes("act") && !sh.includes("total"))) return 3;
+      if (sh.includes("write act") || (sh.includes("write") && sh.includes("act"))) return 4;
+      if (sh.includes("write rate") || (sh.includes("write") && !sh.includes("act") && !sh.includes("total"))) return 5;
+      if (sh.includes("used")) return 6;
+      if (sh.includes("free")) return 7;
+      if (sh.includes("total read")) return 8;
+      if (sh.includes("total write")) return 9;
+      return 10;
+    }
+
+    function getDriveOrdinal(s) {
+      const text = `${s.hardware || ""} ${s.short || ""} ${s.id || ""}`;
+      const m = text.match(/SSD\s*(\d+)/i) || text.match(/\/(?:nvme|storage)\/(\d+)/i);
+      return m ? parseInt(m[1], 10) : 0;
+    }
+
+    const driveGroups = new Map();
+    for (const s of storageAll) {
+      const ord = getDriveOrdinal(s);
+      let hdr = s.hardware;
+      if (!hdr || hdr === "SSD" || hdr === "Storage") hdr = `SSD ${ord}`;
+      if (!driveGroups.has(ord)) driveGroups.set(ord, { header: hdr, items: [] });
+      const entry = driveGroups.get(ord);
+      if ((!entry.header || entry.header.length < hdr.length) && hdr.length > 5) entry.header = hdr;
+      entry.items.push(s);
+    }
+
+    const sortedOrdinals = Array.from(driveGroups.keys()).sort((a, b) => a - b);
+    let diskHtml = "";
+    for (const ord of sortedOrdinals) {
+      const grp = driveGroups.get(ord);
+      diskHtml += `<div class="sub-hdr">${grp.header}</div>`;
+      const sortedItems = grp.items.slice().sort((a, b) => storageMetricOrder(a) - storageMetricOrder(b));
+      for (const s of sortedItems) {
+        diskHtml += `<div class="r sub-r"><span>${s.short}</span><span>${fmt(s)}</span></div>`;
+      }
+    }
+    $("diskRows").innerHTML = diskHtml;
     $("diskNow").textContent = diskT ? fmt(diskT) : "—";
 
     const miscItems = [
@@ -686,7 +921,8 @@
     fillRows("miscRows", miscUnique.slice(0, 8));
     $("miscNow").textContent = fan ? fmt(fan) : "—";
 
-    $("dataTable").querySelector("tbody").innerHTML = state.sensors.map((s) => {
+    const detailedSensors = sortSensors(state.sensors);
+    $("dataTable").querySelector("tbody").innerHTML = detailedSensors.map((s) => {
       const pinned = state.pinned.includes(s.id);
       const grp = localizedGroupName(s.group, state.currentLocale);
       return `<tr data-id="${s.id}">
@@ -698,6 +934,8 @@
         <td><button type="button" class="pin ${pinned ? "on" : ""}" data-pin="${s.id}">${pinned ? t.pinned : t.pin}</button></td>
       </tr>`;
     }).join("");
+
+    renderSensorDataModal();
   }
 
   function setLocalePerspective(locale) {
@@ -782,9 +1020,42 @@
     });
   }
 
+  function renderSensorDataModal() {
+    const modal = $("sensorDataModal");
+    if (!modal || !modal.open) return;
+
+    const filterVal = ($("sensorDataFilter")?.value || "").toLowerCase().trim();
+    let sensors = sortSensors(state.sensors);
+    if (filterVal) {
+      sensors = sensors.filter((s) => {
+        return (s.id && String(s.id).toLowerCase().includes(filterVal)) ||
+               (s.name && String(s.name).toLowerCase().includes(filterVal)) ||
+               (s.group && String(s.group).toLowerCase().includes(filterVal)) ||
+               (s.kind && String(s.kind).toLowerCase().includes(filterVal)) ||
+               (s.source && String(s.source).toLowerCase().includes(filterVal));
+      });
+    }
+
+    $("sensorDataCount").textContent = `${sensors.length} / ${state.sensors.length} items`;
+    $("sensorDataTbody").innerHTML = sensors.map((s) => `
+      <tr>
+        <td style="color:var(--accent)">${s.id}</td>
+        <td>${s.name}</td>
+        <td>${s.group} <span style="color:var(--muted)">→ ${canonicalGroup(s.group)}</span></td>
+        <td>${s.kind}</td>
+        <td class="mono" style="font-weight:600">${fmt(s)}</td>
+        <td style="color:var(--muted);font-size:11px">${s.source}</td>
+      </tr>
+    `).join("");
+  }
+
   function tick() {
-    if (state.live) reloadLive();
-    else sampleDemo();
+    if (state.live) {
+      reloadLive();
+    } else {
+      sampleDemo();
+      reloadLive();
+    }
     render();
   }
 
@@ -792,6 +1063,22 @@
     if (state.timer) clearInterval(state.timer);
     state.timer = setInterval(tick, state.live ? 1500 : state.ms);
   }
+
+  $("sensorDataBtn")?.addEventListener("click", () => {
+    $("sensorDataModal")?.showModal();
+    renderSensorDataModal();
+  });
+  $("closeSensorModalBtn")?.addEventListener("click", () => {
+    $("sensorDataModal")?.close();
+  });
+  $("sensorDataModal")?.addEventListener("click", (e) => {
+    if (e.target === $("sensorDataModal")) {
+      $("sensorDataModal")?.close();
+    }
+  });
+  $("sensorDataFilter")?.addEventListener("input", () => {
+    renderSensorDataModal();
+  });
 
   $("sizeSeg").addEventListener("click", (e) => {
     const b = e.target.closest("button[data-size]");
@@ -812,15 +1099,47 @@
     render();
   });
   $("sensorList").addEventListener("click", (e) => {
+    const chk = e.target.closest(".row-chk[data-chk]");
+    if (chk) {
+      const id = chk.dataset.chk;
+      if (state.selectedIds.has(id)) {
+        if (state.selectedIds.size > 1) state.selectedIds.delete(id);
+      } else {
+        state.selectedIds.add(id);
+      }
+      state.selected = id;
+      render();
+      return;
+    }
     const row = e.target.closest(".row[data-id]");
     if (!row) return;
-    state.selected = row.dataset.id;
+    const id = row.dataset.id;
+    if (e.ctrlKey || e.metaKey || e.shiftKey) {
+      if (state.selectedIds.has(id)) {
+        if (state.selectedIds.size > 1) state.selectedIds.delete(id);
+      } else {
+        state.selectedIds.add(id);
+      }
+    } else {
+      state.selectedIds = new Set([id]);
+    }
+    state.selected = id;
     render();
   });
   $("dock").addEventListener("click", (e) => {
     const band = e.target.closest(".band[data-id]");
     if (!band) return;
-    state.selected = band.dataset.id;
+    const id = band.dataset.id;
+    if (e.ctrlKey || e.metaKey || e.shiftKey) {
+      if (state.selectedIds.has(id)) {
+        if (state.selectedIds.size > 1) state.selectedIds.delete(id);
+      } else {
+        state.selectedIds.add(id);
+      }
+    } else {
+      state.selectedIds = new Set([id]);
+    }
+    state.selected = id;
     render();
   });
   $("dataTable").addEventListener("click", (e) => {
@@ -834,7 +1153,20 @@
       return;
     }
     const tr = e.target.closest("tr[data-id]");
-    if (tr) { state.selected = tr.dataset.id; render(); }
+    if (tr) {
+      const id = tr.dataset.id;
+      if (e.ctrlKey || e.metaKey || e.shiftKey) {
+        if (state.selectedIds.has(id)) {
+          if (state.selectedIds.size > 1) state.selectedIds.delete(id);
+        } else {
+          state.selectedIds.add(id);
+        }
+      } else {
+        state.selectedIds = new Set([id]);
+      }
+      state.selected = id;
+      render();
+    }
   });
   window.addEventListener("resize", () => render());
 

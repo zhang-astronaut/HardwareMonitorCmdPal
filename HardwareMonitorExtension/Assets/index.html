@@ -26,6 +26,7 @@
         </div>
         <button type="button" class="btn" id="stressBtn" data-i18n="stress">Stress</button>
         <button type="button" class="btn" id="pauseBtn" data-i18n="pause">Pause</button>
+        <button type="button" class="btn" id="sensorDataBtn" data-i18n="sensorData">Sensor Data</button>
       </div>
     </header>
 
@@ -99,6 +100,35 @@
       </div>
     </section>
   </div>
+
+  <dialog id="sensorDataModal" class="sensor-modal">
+    <div class="sensor-modal-card">
+      <div class="sensor-modal-header">
+        <div class="sensor-title-group">
+          <h3 data-i18n="sensorDataTitle">Live Sensor Data</h3>
+          <span class="sensor-count-badge" id="sensorDataCount">0 items</span>
+        </div>
+        <input type="text" id="sensorDataFilter" placeholder="Filter by ID, name, group, kind, source..." class="sensor-search-input" />
+        <button type="button" class="btn btn-close" id="closeSensorModalBtn" title="Close">✕</button>
+      </div>
+      <div class="sensor-modal-body">
+        <table class="sensor-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Group (Raw → Canon)</th>
+              <th>Kind</th>
+              <th>Current Value</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody id="sensorDataTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </dialog>
+
   <script src="live-data.js"></script>
   <script src="app.js"></script>
 </body>

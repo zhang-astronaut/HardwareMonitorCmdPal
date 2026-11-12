@@ -11,6 +11,12 @@ namespace HardwareMonitorExtension.Services;
 /// <summary>
 /// 用 GDI+ 生成折线图 PNG。Command Palette 无 Canvas API，ContentPage 用 ImageContent 展示位图。
 /// </summary>
+/// <summary>
+/// Generates line chart PNG via GDI+. Command Palette lacks Canvas API; ContentPage uses ImageContent to display bitmaps.
+/// </summary>
+/// <summary>
+/// GDI+ を使用して折れ線グラフ PNG を生成。Command Palette には Canvas API がないため、ContentPage では ImageContent を使用してビットマップを表示します。
+/// </summary>
 public static class ChartRenderer
 {
     public static byte[] RenderLineChart(
@@ -125,6 +131,8 @@ public static class ChartRenderer
     }
 
     /// <summary>Dock 用迷你火花线（透明底、细线）。</summary>
+    /// <summary>Mini sparkline for Dock (transparent background, fine line).</summary>
+    /// <summary>Dock 用ミニ スパークライン（透明背景、細線）。</summary>
     public static byte[] RenderSparkline(
         IReadOnlyList<(DateTimeOffset Ts, double Value)> points,
         bool isTemperature,

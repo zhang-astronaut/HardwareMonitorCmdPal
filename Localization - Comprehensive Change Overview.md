@@ -1064,9 +1064,4 @@ public static class Loc
 ### 18. Mod: `HardwareMonitorExtension/Assets/app.js`
 Full replacement incorporating the `LOCALES` registry, browser language auto-detection, dynamic perspective hover switching, dynamic KPI titles, and bi-directional group normalization.
 
----
 
-### Review & Sign-Off Request
-
-All changes are strictly contained within `HardwareMonitorCmdPal.Localized`. The pristine reference folder `HardwareMonitorCmdPal.Original` remains 100% untouched.
-The plan is compiled and documented in `ComprehensiveChangeOverview.md`.

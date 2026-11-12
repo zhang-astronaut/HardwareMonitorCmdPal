@@ -90,4 +90,11 @@ public interface ILocalizationProvider
     string CpuTotalLoad { get; }
     string CpuPackagePowerEst { get; }
     string CpuPower { get; }
+
+    // Sensor Short Labels & Formatting
+    string ShortLabelPackage { get; }
+    string ShortLabelHotSpot { get; }
+    string ShortLabelTemp { get; }
+    string EstimatedSuffix { get; }
+    string FormatEstimatedName(string baseName);
 }

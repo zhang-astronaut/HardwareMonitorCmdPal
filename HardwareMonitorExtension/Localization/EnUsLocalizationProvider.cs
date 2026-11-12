@@ -71,13 +71,13 @@ public sealed class EnUsLocalizationProvider : ILocalizationProvider
 
     public string GetGroupDisplayName(string groupKey) => groupKey switch
     {
-        "Processor" or "处理器" => GroupProcessor,
-        "Graphics" or "显卡" => GroupGraphics,
-        "Storage" or "存储" => GroupStorage,
-        "Motherboard" or "主板" => GroupMotherboard,
-        "Memory" or "内存" => GroupMemory,
-        "Battery" or "电池" => GroupBattery,
-        "Network" or "网络" => GroupNetwork,
+        "Processor" or "处理器" or "プロセッサ" => GroupProcessor,
+        "Graphics" or "显卡" or "グラフィックス" => GroupGraphics,
+        "Storage" or "存储" or "ストレージ" => GroupStorage,
+        "Motherboard" or "主板" or "マザーボード" => GroupMotherboard,
+        "Memory" or "内存" or "メモリ" => GroupMemory,
+        "Battery" or "电池" or "バッテリー" => GroupBattery,
+        "Network" or "网络" or "ネットワーク" => GroupNetwork,
         _ => GroupOther,
     };
 
@@ -96,4 +96,15 @@ public sealed class EnUsLocalizationProvider : ILocalizationProvider
     public string CpuTotalLoad => "CPU Total Load";
     public string CpuPackagePowerEst => "CPU Package Power (Estimated)";
     public string CpuPower => "CPU Power";
+
+    public string ShortLabelPackage => "Package";
+    public string ShortLabelHotSpot => "Hot Spot";
+    public string ShortLabelTemp => "Temp";
+    public string EstimatedSuffix => " (Estimated)";
+    public string FormatEstimatedName(string baseName) =>
+        baseName.Contains("(Estimated)", StringComparison.OrdinalIgnoreCase) ||
+        baseName.Contains("估算") ||
+        baseName.Contains("推定")
+            ? baseName
+            : $"{baseName} (Estimated)";
 }
