@@ -1,0 +1,93 @@
+{
+  "Shared": {
+    "LocaleCode": "zh-CN",
+    "NativeName": "简体中文",
+    "OpenDashboardTitle": "打开实时图表看板",
+    "InstallHelperTitle": "安装 CPU 温度开机采样（一次）",
+    "PinToggleName": "固定到快捷栏 / 取消固定",
+    "ShortLabelPackage": "封装",
+    "EstimatedSuffix": " (估算)",
+    "GroupProcessor": "处理器",
+    "GroupGraphics": "显卡",
+    "GroupStorage": "存储",
+    "GroupMotherboard": "主板",
+    "GroupMemory": "内存",
+    "GroupBattery": "电池",
+    "GroupNetwork": "网络",
+    "GroupOther": "其他"
+  },
+  "HardwareMonitorCommandsProvider": {
+    "ExtensionDisplayName": "硬件监视器",
+    "AllSensorsSubtitle": "全部传感器 · 可固定到快捷栏",
+    "DashboardSubtitle": "btop 风格离线 index.html",
+    "InstallHelperSubtitle": "注册后开机自动，无需再点；普通权限 CPU Tctl 为 0"
+  },
+  "HardwareMonitorSettingsManager": {
+    "RefreshIntervalLabel": "内容页刷新间隔 (ms)",
+    "RefreshIntervalDesc": "500–3000，页面可见时生效",
+    "HotThresholdLabel": "过热阈值 (°C)",
+    "HotThresholdDesc": "达到该温度显示橙色",
+    "CriticalThresholdLabel": "危险阈值 (°C)",
+    "CriticalThresholdDesc": "达到该温度显示红色并预警",
+    "CompactDefaultLabel": "默认紧凑布局",
+    "CompactDefaultDesc": "打开列表时隐藏次要字段（Compact）",
+    "MergeLoadLabel": "快捷栏合并显示占用",
+    "MergeLoadDesc": "温度读数后附加同硬件占用百分比，节省空间"
+  },
+  "PinnedSensorsDockBand": {
+    "DockBandTitle": "硬件读数",
+    "NoDataSubtitle": "暂无数据"
+  },
+  "SensorsListPage": {
+    "ListPageTitle": "硬件监视器",
+    "ListPageAction": "打开",
+    "SearchPlaceholder": "筛选传感器…",
+    "StaleSuffix": " · 可能过期",
+    "ViewChartName": "查看趋势图",
+    "ListFooter": "{0} 项 · 温度 {1} · 已固定 {2} · 峰值 {3}°C{4}"
+  },
+  "SensorChartPage": {
+    "ChartPageTitle": "读数详情",
+    "ChartPageAction": "查看",
+    "NotFoundMarkdown": "# 未找到读数\n\n`{0}` 不在当前快照中。",
+    "SourceLabel": "来源：",
+    "HardwareLabel": "硬件：",
+    "GroupLabel": "分组：",
+    "HistoryPointsLabel": "历史点：",
+    "SamplingNotice": "_采样中，稍候即可看到趋势…_",
+    "TrendHeading": "## 趋势（asciichart · 代码绘制，非位图）",
+    "ChartMeta": "当前 **{0}** · 单位 `{1}` · 窗口约 {2} 分钟 · 点 {3}/{4}",
+    "Thresholds": "阈值：温热 {0:0}° · 过热 {1:0}° · 危险 {2:0}°",
+    "RecentSamplesHeading": "## 最近样本",
+    "TableHeaderTime": "时间",
+    "TableHeaderValue": "数值"
+  },
+  "ChartRenderer": {
+    "ChartNotEnoughPoints": "采样点不足，正在累积…",
+    "ChartHotLabel": "过热",
+    "ChartCritLabel": "危险",
+    "ChartRange": "当前 {0:0}{1}  ·  范围 {2:0}–{3:0}  ·  点数 {4}"
+  },
+  "ListCommands": {
+    "ToggleCompactName": "切换紧凑布局"
+  },
+  "SensorService": {
+    "BackendInitializing": "正在初始化",
+    "BackendLhmNoPawn": "LibreHardwareMonitor（无 PawnIO）",
+    "BackendLhmWithPawn": "LibreHardwareMonitor + PawnIO 已安装",
+    "BackendLhmFailNoPawn": "LHM 打开失败 · 无 PawnIO",
+    "BackendLhmFailPawn": "LHM 打开失败 · PawnIO 已安装",
+    "StatusCannotRead": "无法读取传感器",
+    "StatusCheckPerms": "请检查 PawnIO / 管理员权限",
+    "StatusNoData": "暂无数据",
+    "StatusTitle": "状态",
+    "AcpiThermalZone": "ACPI 热区 {0}",
+    "CpuPackageTemp": "CPU 封装温度 (Tctl)",
+    "CpuPackage": "CPU 封装",
+    "CpuTotalLoad": "CPU 总负载",
+    "CpuPackagePowerEst": "CPU 封装功耗 (估算)",
+    "CpuPower": "CPU 功耗",
+    "ShortLabelHotSpot": "热点",
+    "ShortLabelTemp": "温度"
+  }
+}
