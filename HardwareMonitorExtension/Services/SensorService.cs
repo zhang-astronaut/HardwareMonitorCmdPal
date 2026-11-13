@@ -227,6 +227,22 @@ public sealed partial class SensorService : IDisposable
         return Sort(list);
     }
 
+    private static string NormalizeStorageShortLabel(string shortLabel, string name, string source)
+    {
+        if (source.Contains("Storage", StringComparison.OrdinalIgnoreCase) && source.Contains("Data", StringComparison.OrdinalIgnoreCase))
+        {
+            var m = System.Text.RegularExpressions.Regex.Match(shortLabel, @"SSD\s*(\d+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            var prefix = m.Success ? $"SSD {m.Groups[1].Value}" : "SSD";
+
+            if (shortLabel.Contains("Read", StringComparison.OrdinalIgnoreCase) || name.Contains("Read", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Total Reads";
+
+            if (shortLabel.Contains("Writ", StringComparison.OrdinalIgnoreCase) || shortLabel.Contains("Data Wr", StringComparison.OrdinalIgnoreCase) || name.Contains("Writ", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Total Writes";
+        }
+        return shortLabel;
+    }
+
     private static void MergeElevatedSensors(List<SensorReading> list)
     {
         var snapshot = ElevatedTempHelper.TryReadSnapshot();
@@ -299,15 +315,17 @@ public sealed partial class SensorService : IDisposable
                 if (!Enum.TryParse<SensorKind>(es.Kind, ignoreCase: true, out var kind))
                     continue;
 
+                var label = NormalizeStorageShortLabel(es.ShortLabel, es.Name, es.Source);
                 var existingIdx = list.FindIndex(s => s.Id == es.Id || s.Name == es.Name);
                 if (existingIdx >= 0)
                 {
                     list[existingIdx] = list[existingIdx] with
                     {
                         Value = es.Value,
+                        Unit = es.Unit,
                         Source = es.Source,
                         HardwareName = !string.IsNullOrEmpty(es.HardwareName) ? es.HardwareName : list[existingIdx].HardwareName,
-                        ShortLabel = !string.IsNullOrEmpty(es.ShortLabel) ? es.ShortLabel : list[existingIdx].ShortLabel,
+                        ShortLabel = !string.IsNullOrEmpty(label) ? label : list[existingIdx].ShortLabel,
                     };
                 }
                 else
@@ -321,7 +339,7 @@ public sealed partial class SensorService : IDisposable
                         Value: es.Value,
                         Unit: es.Unit,
                         HardwareName: es.HardwareName,
-                        ShortLabel: es.ShortLabel,
+                        ShortLabel: label,
                         MergedLoadText: null));
                 }
             }
@@ -433,7 +451,9 @@ public sealed partial class SensorService : IDisposable
         SensorKind.Clock => "MHz",
         SensorKind.Power => "W",
         SensorKind.Fan => "RPM",
-        SensorKind.Data => sensor?.Name.Contains("Total", StringComparison.OrdinalIgnoreCase) == true ? "MB" : "MB/s",
+        SensorKind.Data => (sensor?.SensorType == SensorType.Throughput || 
+                            sensor?.Name.Contains("Rate", StringComparison.OrdinalIgnoreCase) == true || 
+                            sensor?.Name.Contains("Speed", StringComparison.OrdinalIgnoreCase) == true) ? "MB/s" : "GB",
         SensorKind.Voltage => "V",
         SensorKind.Level => "%",
         SensorKind.Flow => "L/h",
@@ -482,8 +502,29 @@ public sealed partial class SensorService : IDisposable
             n.Contains("CPU Total", StringComparison.OrdinalIgnoreCase) ||
             n.Equals("Core", StringComparison.OrdinalIgnoreCase) && hardware.HardwareType == HardwareType.Cpu)
             return prefix;
-        if (n.Contains("Temperature", StringComparison.OrdinalIgnoreCase) && hardware.HardwareType == HardwareType.Storage)
-            return $"{prefix} {Loc.Current.ShortLabelTemp}";
+        if (hardware.HardwareType == HardwareType.Storage)
+        {
+            if (n.Contains("Temperature", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} {Loc.Current.ShortLabelTemp}";
+            if (n.Contains("Read Rate", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Read Rate";
+            if (n.Contains("Write Rate", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Write Rate";
+            if (n.Contains("Read Activity", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Read Act";
+            if (n.Contains("Write Activity", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Write Act";
+            if (n.Contains("Total Activity", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Act";
+            if (n.Contains("Used Space", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Used";
+            if (n.Contains("Free Space", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Free";
+            if (n.Contains("Data Read", StringComparison.OrdinalIgnoreCase) || n.Equals("Read", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Total Reads";
+            if (n.Contains("Data Written", StringComparison.OrdinalIgnoreCase) || n.Equals("Write", StringComparison.OrdinalIgnoreCase))
+                return $"{prefix} Total Writes";
+        }
 
         return $"{prefix} {Truncate(n, 18)}";
     }
@@ -623,16 +664,43 @@ public sealed partial class SensorService : IDisposable
             }
             if (HardwareGroups.IsStorage(g))
             {
-                if (sh.Contains("temp")) return 0;
-                if (sh.Contains("act") && !sh.Contains("read") && !sh.Contains("write")) return 1;
-                if (sh.Contains("read act") || (sh.Contains("read") && sh.Contains("act"))) return 2;
-                if (sh.Contains("read rate") || (sh.Contains("read") && !sh.Contains("act") && !sh.Contains("total"))) return 3;
-                if (sh.Contains("write act") || (sh.Contains("write") && sh.Contains("act"))) return 4;
-                if (sh.Contains("write rate") || (sh.Contains("write") && !sh.Contains("act") && !sh.Contains("total"))) return 5;
-                if (sh.Contains("used")) return 6;
-                if (sh.Contains("free")) return 7;
-                if (sh.Contains("total read")) return 8;
-                if (sh.Contains("total write")) return 9;
+                var src = s.Source ?? string.Empty;
+                var text = $"{s.ShortLabel} {s.Name}".ToLowerInvariant();
+                var isTemp = k == SensorKind.Temperature || src.Contains("Temperature", StringComparison.OrdinalIgnoreCase);
+                var isLoad = k == SensorKind.Load || src.Contains("Load", StringComparison.OrdinalIgnoreCase);
+                var isThroughput = src.Contains("Throughput", StringComparison.OrdinalIgnoreCase) || s.Unit.Equals("MB/s", StringComparison.OrdinalIgnoreCase);
+                var isData = (k == SensorKind.Data || src.Contains("Data", StringComparison.OrdinalIgnoreCase)) && !isThroughput;
+
+                // 1. Temp: Storage && Temperature
+                if (isTemp) return 0;
+
+                // 2. Overall Activity: Storage && Load && (act/total) && !(read/write/used/free)
+                if (isLoad && (text.Contains("act") || text.Contains("total")) && !text.Contains("read") && !text.Contains("write") && !text.Contains("used") && !text.Contains("free")) return 1;
+
+                // 3. Read Act: Storage && Load && read
+                if (isLoad && text.Contains("read")) return 2;
+
+                // 4. Read Rate: Storage && (Throughput/MB/s) && read
+                if (isThroughput && text.Contains("read")) return 3;
+
+                // 5. Write Act: Storage && Load && write
+                if (isLoad && text.Contains("write")) return 4;
+
+                // 6. Write Rate: Storage && (Throughput/MB/s) && write
+                if (isThroughput && text.Contains("write")) return 5;
+
+                // 7. Used: Storage && Load && used
+                if (isLoad && text.Contains("used")) return 6;
+
+                // 8. Free: Storage && Load && free
+                if (isLoad && text.Contains("free")) return 7;
+
+                // 9. Total Read Data: Storage && Data && read && !(rate/speed/act)
+                if (isData && text.Contains("read") && !text.Contains("rate") && !text.Contains("act")) return 8;
+
+                // 10. Total Written Data: Storage && Data && (write/written) && !(rate/speed/act)
+                if (isData && (text.Contains("write") || text.Contains("written")) && !text.Contains("rate") && !text.Contains("act")) return 9;
+
                 return 10;
             }
             return k switch

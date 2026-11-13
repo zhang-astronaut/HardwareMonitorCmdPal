@@ -341,8 +341,8 @@ public static class TempHelperServer
                         "load" when s.Name.Contains("Total", StringComparison.OrdinalIgnoreCase) || s.Name.Contains("Activity", StringComparison.OrdinalIgnoreCase) => $"SSD {driveIdx} Act",
                         "data" when s.SensorType == SensorType.Throughput || s.Name.Contains("Rate", StringComparison.OrdinalIgnoreCase) =>
                             s.Name.Contains("Read", StringComparison.OrdinalIgnoreCase) ? $"SSD {driveIdx} Read Rate" : $"SSD {driveIdx} Write Rate",
-                        "data" when s.Name.Contains("Read", StringComparison.OrdinalIgnoreCase) => $"SSD {driveIdx} Total Read",
-                        "data" when s.Name.Contains("Write", StringComparison.OrdinalIgnoreCase) => $"SSD {driveIdx} Total Written",
+                        "data" when s.Name.Contains("Read", StringComparison.OrdinalIgnoreCase) => $"SSD {driveIdx} Total Reads",
+                        "data" when s.Name.Contains("Writ", StringComparison.OrdinalIgnoreCase) => $"SSD {driveIdx} Total Writes",
                         _ => $"SSD {driveIdx} {(s.Name.Length > 8 ? s.Name[..7] + "…" : s.Name)}",
                     },
                     HardwareType.Motherboard => s.Name.Length > 12 ? s.Name[..11] + "…" : s.Name,

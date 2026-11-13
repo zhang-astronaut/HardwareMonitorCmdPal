@@ -287,9 +287,23 @@
   }
 
   function shortOf(s) {
-    if (s.short) return s.short;
-    const n = s.name || s.id || "Sensor";
-    return n.length > 10 ? n.slice(0, 10) : n;
+    let sh = s.short || "";
+    if (!sh) {
+      const n = s.name || s.id || "Sensor";
+      sh = n.length > 10 ? n.slice(0, 10) : n;
+    }
+    if (canonicalGroup(s.group) === "Storage") {
+      const isThroughput = (s.source && s.source.includes("Throughput")) || s.unit === "MB/s";
+      const isData = (normalizeKind(s.kind) === "data" || (s.source && s.source.includes("Data"))) && !isThroughput;
+      if (isData) {
+        const m = sh.match(/SSD\s*(\d+)/i) || (s.id || "").match(/\/(?:nvme|storage)\/(\d+)/i);
+        const prefix = m ? `SSD ${m[1]}` : "SSD";
+        const lower = `${sh} ${s.name || ""}`.toLowerCase();
+        if (lower.includes("read")) return `${prefix} Total Reads`;
+        if (lower.includes("writ")) return `${prefix} Total Writes`;
+      }
+    }
+    return sh;
   }
 
   function applyLive() {
@@ -338,6 +352,46 @@
     return true;
   }
 
+  function storageMetricOrder(s) {
+    const isTemp = s.kind === "temperature" || (s.source && s.source.includes("Temperature"));
+    const isLoad = s.kind === "load" || (s.source && s.source.includes("Load"));
+    const isThroughput = (s.source && s.source.includes("Throughput")) || s.unit === "MB/s";
+    const isData = (s.kind === "data" || (s.source && s.source.includes("Data"))) && !isThroughput;
+    const text = `${s.short || ""} ${s.name || ""}`.toLowerCase();
+
+    // 1. Temp: Storage && Temperature
+    if (isTemp) return 0;
+
+    // 2. Overall Activity: Storage && Load && (act/total) && !(read/write/used/free)
+    if (isLoad && (text.includes("act") || text.includes("total")) && !text.includes("read") && !text.includes("write") && !text.includes("used") && !text.includes("free")) return 1;
+
+    // 3. Read Act: Storage && Load && read
+    if (isLoad && text.includes("read")) return 2;
+
+    // 4. Read Rate: Storage && (Throughput/MB/s) && read
+    if (isThroughput && text.includes("read")) return 3;
+
+    // 5. Write Act: Storage && Load && write
+    if (isLoad && text.includes("write")) return 4;
+
+    // 6. Write Rate: Storage && (Throughput/MB/s) && write
+    if (isThroughput && text.includes("write")) return 5;
+
+    // 7. Used: Storage && Load && used
+    if (isLoad && text.includes("used")) return 6;
+
+    // 8. Free: Storage && Load && free
+    if (isLoad && text.includes("free")) return 7;
+
+    // 9. Total Read Data: Storage && Data && read && !(rate/speed/act)
+    if (isData && text.includes("read") && !text.includes("rate") && !text.includes("act")) return 8;
+
+    // 10. Total Written Data: Storage && Data && (write/written) && !(rate/speed/act)
+    if (isData && (text.includes("write") || text.includes("written")) && !text.includes("rate") && !text.includes("act")) return 9;
+
+    return 10;
+  }
+
   function sortSensors(sensors) {
     function groupRank(g) {
       switch (canonicalGroup(g)) {
@@ -381,19 +435,7 @@
         if (k === "fan") return 14;
         return 15;
       }
-      if (cg === "Storage") {
-        if (sh.includes("temp")) return 0;
-        if (sh.includes("act") && !sh.includes("read") && !sh.includes("write")) return 1;
-        if (sh.includes("read act") || (sh.includes("read") && sh.includes("act"))) return 2;
-        if (sh.includes("read rate") || (sh.includes("read") && !sh.includes("act") && !sh.includes("total"))) return 3;
-        if (sh.includes("write act") || (sh.includes("write") && sh.includes("act"))) return 4;
-        if (sh.includes("write rate") || (sh.includes("write") && !sh.includes("act") && !sh.includes("total"))) return 5;
-        if (sh.includes("used")) return 6;
-        if (sh.includes("free")) return 7;
-        if (sh.includes("total read")) return 8;
-        if (sh.includes("total write")) return 9;
-        return 10;
-      }
+      if (cg === "Storage") return storageMetricOrder(s);
       if (k === "temperature") return 0;
       if (k === "fan") return 1;
       if (k === "load") return 2;
@@ -861,21 +903,6 @@
     const storageTemps = pickByGroup("Storage", "temperature");
     const storageAll = pickByGroup("Storage");
     drawMini("diskMini", (storageTemps.length > 0 ? storageTemps : storageAll).map((s) => s.id));
-
-    function storageMetricOrder(s) {
-      const sh = (s.short || s.name || "").toLowerCase();
-      if (sh.includes("temp")) return 0;
-      if (sh.includes("act") && !sh.includes("read") && !sh.includes("write")) return 1;
-      if (sh.includes("read act") || (sh.includes("read") && sh.includes("act"))) return 2;
-      if (sh.includes("read rate") || (sh.includes("read") && !sh.includes("act") && !sh.includes("total"))) return 3;
-      if (sh.includes("write act") || (sh.includes("write") && sh.includes("act"))) return 4;
-      if (sh.includes("write rate") || (sh.includes("write") && !sh.includes("act") && !sh.includes("total"))) return 5;
-      if (sh.includes("used")) return 6;
-      if (sh.includes("free")) return 7;
-      if (sh.includes("total read")) return 8;
-      if (sh.includes("total write")) return 9;
-      return 10;
-    }
 
     function getDriveOrdinal(s) {
       const text = `${s.hardware || ""} ${s.short || ""} ${s.id || ""}`;

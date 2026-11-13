@@ -35,17 +35,17 @@ public static class Loc
             }
         }
 
+        var langDir = Path.Combine(baseDir, "lang");
+        if (!Directory.Exists(langDir))
+        {
+            langDir = baseDir;
+        }
+
         JsonLocalizationProvider? defaultEn = null;
 
         // 1. Establish en-US baseline
-        var enDir = Path.Combine(baseDir, "en-US");
-        var enFile = Path.Combine(enDir, "en-US.json");
-        if (!File.Exists(enFile) && Directory.Exists(enDir))
-        {
-            enFile = Directory.GetFiles(enDir, "*.json").FirstOrDefault();
-        }
-
-        if (enFile != null && File.Exists(enFile))
+        var enFile = Path.Combine(langDir, "en-US.json");
+        if (File.Exists(enFile))
         {
             try
             {
@@ -55,26 +55,18 @@ public static class Loc
             catch { }
         }
 
-        // 2. Scan all language subfolders
-        if (Directory.Exists(baseDir))
+        // 2. Scan all language JSON files in Localization/lang
+        if (Directory.Exists(langDir))
         {
-            foreach (var dir in Directory.GetDirectories(baseDir))
+            foreach (var targetFile in Directory.GetFiles(langDir, "*.json"))
             {
-                var folderName = Path.GetFileName(dir);
-                var targetFile = Path.Combine(dir, $"{folderName}.json");
-                if (!File.Exists(targetFile))
-                {
-                    targetFile = Directory.GetFiles(dir, "*.json").FirstOrDefault();
-                }
-
-                if (targetFile == null || !File.Exists(targetFile)) continue;
-
+                var fileCode = Path.GetFileNameWithoutExtension(targetFile);
                 try
                 {
                     var content = File.ReadAllText(targetFile);
-                    var provider = new JsonLocalizationProvider(content, folderName, defaultEn);
+                    var provider = new JsonLocalizationProvider(content, fileCode, defaultEn);
                     _providers[provider.LocaleCode] = provider;
-                    _providers[folderName] = provider;
+                    _providers[fileCode] = provider;
                 }
                 catch { }
             }
