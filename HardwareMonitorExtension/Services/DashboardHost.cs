@@ -10,6 +10,14 @@ namespace HardwareMonitorExtension.Services;
 /// 将随包分发的 index.html 释放到用户可写目录并打开（file://），
 /// 保证用户双击/一键打开即可，无需额外环境。
 /// </summary>
+/// <summary>
+/// Extracts the bundled index.html into a user-writable directory and opens it (file://),
+/// ensuring users can launch in one click without extra dependencies.
+/// </summary>
+/// <summary>
+/// パッケージに同梱されている index.html をユーザー書き込み可能ディレクトリに展開して開く（file://）。
+/// 追加の環境設定なしで、ダブルクリックまたはワンクリックで起動できるようにします。
+/// </summary>
 public static class DashboardHost
 {
     public const string FileName = "index.html";
@@ -21,6 +29,8 @@ public static class DashboardHost
         var dest = Path.Combine(dir, FileName);
 
         // 优先从包内 Assets 复制完整看板（含 css/js）
+        // Prefer copying full dashboard from bundled Assets (including css/js)
+        // パッケージ内の Assets から完全なダッシュボード（css/js を含む）を優先的にコピー
         var assets = Path.Combine(AppContext.BaseDirectory, "Assets");
         var packaged = Path.Combine(assets, FileName);
         if (File.Exists(packaged))
@@ -38,6 +48,8 @@ public static class DashboardHost
             catch
             {
                 // 可能被占用，沿用旧文件
+                // May be locked by another process; retain existing file
+                // 他のプロセスで使用中の可能性があるため、既存ファイルをそのまま使用
             }
 
             return dest;
@@ -53,6 +65,8 @@ public static class DashboardHost
     {
         var path = EnsureDashboardFile();
         // 打开后开启一段 live-data.js 写盘窗口；之后靠文件访问时间续期
+        // Open a live-data.js write window upon launch; subsequently renewed based on file access time
+        // 起動後に一定時間の live-data.js 書き込みウィンドウを開始。以降はファイル アクセス時間に基づいて更新を継続
         LiveSnapshotWriter.NotifyDashboardOpen();
         var uri = new Uri(path).AbsoluteUri;
         try
@@ -78,11 +92,11 @@ public static class DashboardHost
     private const string FallbackHtml =
         """
         <!DOCTYPE html>
-        <html lang="zh-CN"><head><meta charset="utf-8"><title>Hardware Monitor</title>
+        <html lang="en"><head><meta charset="utf-8"><title>Hardware Monitor</title>
         <style>body{font:14px/1.5 Segoe UI,sans-serif;background:#0b0d10;color:#e8eef7;padding:24px}
         </style></head><body>
         <h1>Hardware Monitor</h1>
-        <p>完整看板未随包释放，请将项目中的 <code>index.html</code> 复制到本目录。</p>
+        <p>Full dashboard assets not extracted. Please copy <code>index.html</code> from the project to this folder.</p>
         </body></html>
         """;
 }

@@ -3,6 +3,7 @@
 
 using System.IO;
 using HardwareMonitorExtension.Services;
+using HardwareMonitorExtension.Localization;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 using Windows.Foundation;
 
@@ -18,32 +19,32 @@ internal sealed partial class HardwareMonitorSettingsManager : JsonSettingsManag
 
     private readonly TextSetting _refreshMs = new(
         Namespaced(nameof(RefreshMs)),
-        "内容页刷新间隔 (ms)",
-        "500–3000，页面可见时生效",
+        Loc.Current.RefreshIntervalLabel,
+        Loc.Current.RefreshIntervalDesc,
         "1000");
 
     private readonly TextSetting _hotC = new(
         Namespaced(nameof(HotC)),
-        "过热阈值 (°C)",
-        "达到该温度显示橙色",
+        Loc.Current.HotThresholdLabel,
+        Loc.Current.HotThresholdDesc,
         "80");
 
     private readonly TextSetting _critC = new(
         Namespaced(nameof(CriticalC)),
-        "危险阈值 (°C)",
-        "达到该温度显示红色并预警",
+        Loc.Current.CriticalThresholdLabel,
+        Loc.Current.CriticalThresholdDesc,
         "90");
 
     private readonly ToggleSetting _compactDefault = new(
         Namespaced(nameof(CompactByDefault)),
-        "默认紧凑布局",
-        "打开列表时隐藏次要字段（Compact）",
+        Loc.Current.CompactDefaultLabel,
+        Loc.Current.CompactDefaultDesc,
         false);
 
     private readonly ToggleSetting _mergeLoad = new(
         Namespaced(nameof(MergeLoadInDock)),
-        "快捷栏合并显示占用",
-        "温度读数后附加同硬件占用百分比，节省空间",
+        Loc.Current.MergeLoadLabel,
+        Loc.Current.MergeLoadDesc,
         true);
 
     public int RefreshMs => ParseInt(_refreshMs.Value, 1000, 500, 3000);

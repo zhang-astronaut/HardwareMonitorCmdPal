@@ -4,6 +4,7 @@
 
 using System.Text;
 using HardwareMonitorExtension.Services;
+using HardwareMonitorExtension.Localization;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -21,13 +22,13 @@ internal sealed partial class SensorChartPage : ContentPage
         _hub = hub;
         _sensorId = sensorId;
         Icon = new IconInfo("📈");
-        Title = "读数详情";
-        Name = "查看";
+        Title = Loc.Current.ChartPageTitle;
+        Name = Loc.Current.ChartPageAction;
         Commands =
         [
             new CommandContextItem(new OpenDashboardCommand())
             {
-                Title = "打开实时图表看板",
+                Title = Loc.Current.OpenDashboardTitle,
                 Icon = new IconInfo("🌐"),
             },
         ];
@@ -61,7 +62,7 @@ internal sealed partial class SensorChartPage : ContentPage
         var snap = _hub.Snapshot;
         var sensor = snap.Find(_sensorId);
         if (sensor is null)
-            return [new MarkdownContent($"# 未找到读数\n\n`{_sensorId}` 不在当前快照中。")];
+            return [new MarkdownContent(Loc.Current.NotFoundMarkdown(_sensorId))];
 
         var series = _hub.History.Snapshot(_sensorId);
 
@@ -70,14 +71,14 @@ internal sealed partial class SensorChartPage : ContentPage
         sb.AppendLine();
         sb.AppendLine($"{sensor.Name}");
         sb.AppendLine();
-        sb.AppendLine($"- 来源：`{sensor.Source}`");
-        sb.AppendLine($"- 硬件：{sensor.HardwareName} · 分组：{sensor.Group}");
-        sb.AppendLine($"- 历史点：{series.Count}/180");
+        sb.AppendLine($"- {Loc.Current.SourceLabel} `{sensor.Source}`");
+        sb.AppendLine($"- {Loc.Current.HardwareLabel} {sensor.HardwareName} · {Loc.Current.GroupLabel} {sensor.LocalizedGroup}");
+        sb.AppendLine($"- {Loc.Current.HistoryPointsLabel} {series.Count}/180");
         sb.AppendLine();
 
         if (series.Count < 2)
         {
-            sb.AppendLine("_采样中，稍候即可看到趋势…_");
+            sb.AppendLine(Loc.Current.SamplingNotice);
             return [new MarkdownContent(sb.ToString())];
         }
 
@@ -117,26 +118,26 @@ internal sealed partial class SensorChartPage : ContentPage
         // 在图下方追加时间轴（asciichart-sharp 本身无 X 轴 API）
         var timeAxis = BuildTimeAxis(picked);
 
-        sb.AppendLine("## 趋势（asciichart · 代码绘制，非位图）");
+        sb.AppendLine(Loc.Current.TrendHeading);
         sb.AppendLine();
         sb.AppendLine("```");
         sb.AppendLine(chart);
         sb.AppendLine(timeAxis);
         sb.AppendLine("```");
         sb.AppendLine();
-        sb.AppendLine($"当前 **{sensor.DisplayValue}** · 单位 `{sensor.Unit}` · 窗口约 3 分钟 · 点 {sampled.Length}/{series.Count}");
+        sb.AppendLine(Loc.Current.ChartMeta(sensor.DisplayValue, sensor.Unit, 3, sampled.Length, series.Count));
 
         if (isTemp)
         {
             sb.AppendLine();
-            sb.AppendLine($"阈值：偏热 {ThresholdPolicy.WarmC:0}° · 过热 {ThresholdPolicy.HotC:0}° · 危险 {ThresholdPolicy.CriticalC:0}°");
+            sb.AppendLine(Loc.Current.Thresholds(ThresholdPolicy.WarmC, ThresholdPolicy.HotC, ThresholdPolicy.CriticalC));
         }
 
         sb.AppendLine();
-        sb.AppendLine("## 近期采样");
+        sb.AppendLine(Loc.Current.RecentSamplesHeading);
         sb.AppendLine();
-        sb.AppendLine("| 时间 | 值 |");
-        sb.AppendLine("| --- | --- |");
+        sb.AppendLine($"| {Loc.Current.TableHeaderTime} | {Loc.Current.TableHeaderValue} |");
+        sb.AppendLine("| :--- | :--- |");
         foreach (var (ts, v) in series.TakeLast(8).Reverse())
         {
             var text = isTemp ? $"{v:0}°C" : $"{v:0.#}{sensor.Unit}";

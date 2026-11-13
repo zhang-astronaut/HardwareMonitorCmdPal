@@ -7,6 +7,12 @@ namespace HardwareMonitorExtension;
 /// <summary>
 /// 进程内单例采样枢纽：列表页、图表页、Dock 带共享快照 / 历史 / 固定列表。
 /// </summary>
+/// <summary>
+/// In-process singleton sampling hub: list page, chart page, and Dock band share snapshot / history / pinned list.
+/// </summary>
+/// <summary>
+/// プロセス内シングルトン サンプリング ハブ：リスト ページ、グラフ ページ、Dock バンドでスナップショット / 履歴 / 固定リストを共有。
+/// </summary>
 public sealed partial class SensorHub : IDisposable
 {
     private readonly SensorService _service = new();
@@ -68,6 +74,8 @@ public sealed partial class SensorHub : IDisposable
                 }
 
                 // live-data.js 仅在看板活跃时写入（见 LiveSnapshotWriter.IsDashboardActive）
+                // live-data.js is only written when dashboard is active (see LiveSnapshotWriter.IsDashboardActive)
+                // live-data.js はダッシュボードがアクティブな時のみ書き込み（LiveSnapshotWriter.IsDashboardActive 参照）
                 LiveSnapshotWriter.Write(snap, History);
 
                 SnapshotUpdated?.Invoke(this, EventArgs.Empty);

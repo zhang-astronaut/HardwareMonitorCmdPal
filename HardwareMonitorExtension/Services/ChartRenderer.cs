@@ -4,11 +4,18 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using HardwareMonitorExtension.Services;
+using HardwareMonitorExtension.Localization;
 
 namespace HardwareMonitorExtension.Services;
 
 /// <summary>
 /// 用 GDI+ 生成折线图 PNG。Command Palette 无 Canvas API，ContentPage 用 ImageContent 展示位图。
+/// </summary>
+/// <summary>
+/// Generates line chart PNG via GDI+. Command Palette lacks Canvas API; ContentPage uses ImageContent to display bitmaps.
+/// </summary>
+/// <summary>
+/// GDI+ を使用して折れ線グラフ PNG を生成。Command Palette には Canvas API がないため、ContentPage では ImageContent を使用してビットマップを表示します。
 /// </summary>
 public static class ChartRenderer
 {
@@ -31,7 +38,7 @@ public static class ChartRenderer
         if (points.Count < 2)
         {
             using var emptyFont = new Font("Segoe UI", 12f, FontStyle.Regular, GraphicsUnit.Pixel);
-            g.DrawString("采样点不足，正在积累…", emptyFont, Brushes.Gold, 16, 16);
+            g.DrawString(Loc.Current.ChartNotEnoughPoints, emptyFont, Brushes.Gold, 16, 16);
             return EncodePng(bmp);
         }
 
@@ -75,8 +82,8 @@ public static class ChartRenderer
         // threshold lines for temperature
         if (isTemperature)
         {
-            DrawThreshold(g, ThresholdPolicy.HotC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 140, 66), "过热");
-            DrawThreshold(g, ThresholdPolicy.CriticalC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 90, 90), "危险");
+            DrawThreshold(g, ThresholdPolicy.HotC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 140, 66), Loc.Current.ChartHotLabel);
+            DrawThreshold(g, ThresholdPolicy.CriticalC, minV, maxV, padL, padT, plotW, plotH, Color.FromArgb(255, 90, 90), Loc.Current.ChartCritLabel);
         }
 
         var pts = new PointF[points.Count];
@@ -117,13 +124,15 @@ public static class ChartRenderer
         using var dotBrush = new SolidBrush(lineColor);
         g.FillEllipse(dotBrush, pts[^1].X - 4, pts[^1].Y - 4, 8, 8);
 
-        g.DrawString($"当前 {last:0}{unit}  ·  区间 {minV:0}–{maxV:0}  ·  点数 {points.Count}",
+        g.DrawString(Loc.Current.ChartRange(last, unit, minV, maxV, points.Count),
             labelFont, Brushes.Gainsboro, padL, height - 20);
 
         return EncodePng(bmp);
     }
 
     /// <summary>Dock 用迷你火花线（透明底、细线）。</summary>
+    /// <summary>Mini sparkline for Dock (transparent background, fine line).</summary>
+    /// <summary>Dock 用ミニ スパークライン（透明背景、細線）。</summary>
     public static byte[] RenderSparkline(
         IReadOnlyList<(DateTimeOffset Ts, double Value)> points,
         bool isTemperature,

@@ -1,0 +1,93 @@
+{
+  "Shared": {
+    "LocaleCode": "en-US",
+    "NativeName": "English (US)",
+    "OpenDashboardTitle": "Open Real-Time Dashboard",
+    "InstallHelperTitle": "Install CPU Temp Startup Sampling (One-time)",
+    "PinToggleName": "Pin to Dock / Unpin",
+    "ShortLabelPackage": "Package",
+    "EstimatedSuffix": " (Estimated)",
+    "GroupProcessor": "Processor",
+    "GroupGraphics": "Graphics",
+    "GroupStorage": "Storage",
+    "GroupMotherboard": "Motherboard",
+    "GroupMemory": "Memory",
+    "GroupBattery": "Battery",
+    "GroupNetwork": "Network",
+    "GroupOther": "Other"
+  },
+  "HardwareMonitorCommandsProvider": {
+    "ExtensionDisplayName": "Hardware Monitor",
+    "AllSensorsSubtitle": "All sensors · Can be pinned to dock",
+    "DashboardSubtitle": "btop-style offline index.html",
+    "InstallHelperSubtitle": "Runs at startup automatically; normal user CPU Tctl is 0"
+  },
+  "HardwareMonitorSettingsManager": {
+    "RefreshIntervalLabel": "Content refresh interval (ms)",
+    "RefreshIntervalDesc": "500–3000, active when page is visible",
+    "HotThresholdLabel": "Overheat threshold (°C)",
+    "HotThresholdDesc": "Shows orange when reaching this temperature",
+    "CriticalThresholdLabel": "Critical threshold (°C)",
+    "CriticalThresholdDesc": "Shows red and triggers alert when reaching this temperature",
+    "CompactDefaultLabel": "Default compact layout",
+    "CompactDefaultDesc": "Hide secondary fields when opened (Compact)",
+    "MergeLoadLabel": "Merge usage in Dock",
+    "MergeLoadDesc": "Append usage percentage after temperature reading to save space"
+  },
+  "PinnedSensorsDockBand": {
+    "DockBandTitle": "Hardware Readings",
+    "NoDataSubtitle": "No data available"
+  },
+  "SensorsListPage": {
+    "ListPageTitle": "Hardware Monitor",
+    "ListPageAction": "Open",
+    "SearchPlaceholder": "Filter sensors…",
+    "StaleSuffix": " · May be stale",
+    "ViewChartName": "View Trend Chart",
+    "ListFooter": "{0} items · Temp {1} · Pinned {2} · Peak {3}°C{4}"
+  },
+  "SensorChartPage": {
+    "ChartPageTitle": "Reading Details",
+    "ChartPageAction": "View",
+    "NotFoundMarkdown": "# Reading Not Found\n\n`{0}` is not in current snapshot.",
+    "SourceLabel": "Source:",
+    "HardwareLabel": "Hardware:",
+    "GroupLabel": "Group:",
+    "HistoryPointsLabel": "History points:",
+    "SamplingNotice": "_Sampling in progress, trend will appear shortly…_",
+    "TrendHeading": "## Trend (asciichart)",
+    "ChartMeta": "Current **{0}** · Unit `{1}` · Window ~{2} min · Points {3}/{4}",
+    "Thresholds": "Thresholds: Warm {0:0}° · Hot {1:0}° · Critical {2:0}°",
+    "RecentSamplesHeading": "## Recent Samples",
+    "TableHeaderTime": "Time",
+    "TableHeaderValue": "Value"
+  },
+  "ChartRenderer": {
+    "ChartNotEnoughPoints": "Insufficient samples, accumulating…",
+    "ChartHotLabel": "Hot",
+    "ChartCritLabel": "Critical",
+    "ChartRange": "Current {0:0}{1}  ·  Range {2:0}–{3:0}  ·  Points {4}"
+  },
+  "ListCommands": {
+    "ToggleCompactName": "Toggle Compact Layout"
+  },
+  "SensorService": {
+    "BackendInitializing": "Initializing",
+    "BackendLhmNoPawn": "LibreHardwareMonitor (No PawnIO)",
+    "BackendLhmWithPawn": "LibreHardwareMonitor + PawnIO installed",
+    "BackendLhmFailNoPawn": "LHM open failed · No PawnIO",
+    "BackendLhmFailPawn": "LHM open failed · PawnIO installed",
+    "StatusCannotRead": "Unable to read sensors",
+    "StatusCheckPerms": "Please check PawnIO / Administrator privileges",
+    "StatusNoData": "No data",
+    "StatusTitle": "Status",
+    "AcpiThermalZone": "ACPI Thermal Zone {0}",
+    "CpuPackageTemp": "CPU Package Temperature (Tctl)",
+    "CpuPackage": "CPU Package",
+    "CpuTotalLoad": "CPU Total Load",
+    "CpuPackagePowerEst": "CPU Package Power (Estimated)",
+    "CpuPower": "CPU Power",
+    "ShortLabelHotSpot": "Hot Spot",
+    "ShortLabelTemp": "Temp"
+  }
+}

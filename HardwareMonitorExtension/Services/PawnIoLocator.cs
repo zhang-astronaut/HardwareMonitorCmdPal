@@ -9,6 +9,16 @@ namespace HardwareMonitorExtension.Services;
 /// 说明：PawnIO 设备 ACL 在普通权限下拒绝访问（0x80070005），
 /// 传感器数据不走 PawnIO；CPU 真实温度由 SYSTEM 助手提供，见 TempHelperServer。
 /// </summary>
+/// <summary>
+/// Locates local PawnIO installation directory (used only for backend label display).
+/// Note: PawnIO device ACL denies access under normal privileges (0x80070005);
+/// sensor data does not route through PawnIO; authentic CPU temp is provided by SYSTEM helper (see TempHelperServer).
+/// </summary>
+/// <summary>
+/// ローカルの PawnIO インストール ディレクトリを特定（バックエンド ラベル表示のみに使用）。
+/// 説明：通常権限では PawnIO デバイスの ACL によりアクセスが拒否されるため（0x80070005）、
+/// センサー データは PawnIO を経由しません。CPU の実際の温度は SYSTEM ヘルパーから提供されます（TempHelperServer 参照）。
+/// </summary>
 public static class PawnIoLocator
 {
     private const string UninstallKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\PawnIO";

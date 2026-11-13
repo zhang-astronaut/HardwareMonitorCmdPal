@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,15 +11,22 @@
     <header class="top">
       <div>
         <h1>Hardware Monitor</h1>
-        <p class="meta" id="metaLine">实时采样 · 准备中…</p>
+        <p class="meta" id="metaLine" data-i18n="metaInit">Real-time sampling · Preparing...</p>
       </div>
       <div class="top-actions">
+        <div class="lang-dropdown" id="langDropdown">
+          <button type="button" class="btn lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+            🌐 <span id="currentLangLabel">English (US)</span> <span class="arrow">▾</span>
+          </button>
+          <div class="dropdown-menu" id="langMenu" role="menu"></div>
+        </div>
         <div class="seg" id="sizeSeg">
           <button type="button" data-size="compact">Compact</button>
           <button type="button" data-size="default" class="active">Default</button>
         </div>
-        <button type="button" class="btn" id="stressBtn">压测</button>
-        <button type="button" class="btn" id="pauseBtn">暂停</button>
+        <button type="button" class="btn" id="stressBtn" data-i18n="stress">Stress</button>
+        <button type="button" class="btn" id="pauseBtn" data-i18n="pause">Pause</button>
+        <button type="button" class="btn" id="sensorDataBtn" data-i18n="sensorData">Sensor Data</button>
       </div>
     </header>
 
@@ -28,14 +35,14 @@
     <section class="stage">
       <aside class="panel">
         <div class="panel-h">
-          <h2>命令面板 · Dock</h2>
+          <h2 data-i18n="dockTitle">Command Palette · Dock</h2>
           <span id="dockMode">Default</span>
         </div>
         <div class="dock-wrap">
           <div class="dock" id="dock"></div>
         </div>
         <div class="panel-h" style="margin-top:8px">
-          <h2>全部读数</h2>
+          <h2 data-i18n="allSensors">All Sensors</h2>
           <span id="listCount">0</span>
         </div>
         <div class="list" id="sensorList"></div>
@@ -43,7 +50,7 @@
 
       <main class="panel">
         <div class="panel-h">
-          <h2 id="chartTitle">CPU 封装</h2>
+          <h2 id="chartTitle">CPU Package</h2>
           <span id="chartStats">—</span>
         </div>
         <div class="chart-block">
@@ -63,12 +70,12 @@
             <div class="rows" id="gpuRows"></div>
           </article>
           <article class="mini">
-            <header><h3>存储</h3><span id="diskNow">—</span></header>
+            <header><h3 data-i18n="groupStorage">Storage</h3><span id="diskNow">—</span></header>
             <canvas id="diskMini" width="360" height="110"></canvas>
             <div class="rows" id="diskRows"></div>
           </article>
           <article class="mini">
-            <header><h3>主板 / 风扇 / 内存</h3><span id="miscNow">—</span></header>
+            <header><h3 data-i18n="groupMisc">Motherboard / Fan / Memory</h3><span id="miscNow">—</span></header>
             <canvas id="miscMini" width="360" height="110"></canvas>
             <div class="rows" id="miscRows"></div>
           </article>
@@ -78,14 +85,14 @@
 
     <section class="panel table-panel">
       <div class="panel-h">
-        <h2>明细表</h2>
-        <span id="tableFilterNote">点击行可切换主图</span>
+        <h2 data-i18n="detailedMetrics">Detailed Metrics</h2>
+        <span id="tableFilterNote" data-i18n="tableNote">Click row to switch primary chart</span>
       </div>
       <div class="table-wrap">
         <table id="dataTable">
           <thead>
             <tr>
-              <th>指标</th><th>分组</th><th>类型</th><th>当前值</th><th>来源</th><th></th>
+              <th data-i18n="thSensor">Sensor</th><th data-i18n="thGroup">Group</th><th data-i18n="thKind">Kind</th><th data-i18n="thCurrent">Current</th><th data-i18n="thSource">Source</th><th></th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -93,6 +100,35 @@
       </div>
     </section>
   </div>
+
+  <dialog id="sensorDataModal" class="sensor-modal">
+    <div class="sensor-modal-card">
+      <div class="sensor-modal-header">
+        <div class="sensor-title-group">
+          <h3 data-i18n="sensorDataTitle">Live Sensor Data</h3>
+          <span class="sensor-count-badge" id="sensorDataCount">0 items</span>
+        </div>
+        <input type="text" id="sensorDataFilter" placeholder="Filter by ID, name, group, kind, source..." class="sensor-search-input" />
+        <button type="button" class="btn btn-close" id="closeSensorModalBtn" title="Close">✕</button>
+      </div>
+      <div class="sensor-modal-body">
+        <table class="sensor-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Group (Raw → Canon)</th>
+              <th>Kind</th>
+              <th>Current Value</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody id="sensorDataTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </dialog>
+
   <script src="live-data.js"></script>
   <script src="app.js"></script>
 </body>

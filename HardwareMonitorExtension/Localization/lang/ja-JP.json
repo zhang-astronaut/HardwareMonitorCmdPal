@@ -1,0 +1,93 @@
+{
+  "Shared": {
+    "LocaleCode": "ja-JP",
+    "NativeName": "日本語",
+    "OpenDashboardTitle": "リアルタイム ダッシュボードを開く",
+    "InstallHelperTitle": "CPU 温度起動サンプリングのインストール（1回のみ）",
+    "PinToggleName": "ショートカット バーに固定 / 固定解除",
+    "ShortLabelPackage": "パッケージ",
+    "EstimatedSuffix": "（推定）",
+    "GroupProcessor": "プロセッサ",
+    "GroupGraphics": "グラフィックス",
+    "GroupStorage": "ストレージ",
+    "GroupMotherboard": "マザーボード",
+    "GroupMemory": "メモリ",
+    "GroupBattery": "バッテリー",
+    "GroupNetwork": "ネットワーク",
+    "GroupOther": "その他"
+  },
+  "HardwareMonitorCommandsProvider": {
+    "ExtensionDisplayName": "ハードウェア モニター",
+    "AllSensorsSubtitle": "すべてのセンサー · クイック アクセス バーに固定可能",
+    "DashboardSubtitle": "btop スタイル オフライン index.html",
+    "InstallHelperSubtitle": "登録後は起動時に自動実行されます。通常権限の CPU Tctl は 0 です"
+  },
+  "HardwareMonitorSettingsManager": {
+    "RefreshIntervalLabel": "コンテンツ ページの更新間隔 (ms)",
+    "RefreshIntervalDesc": "500–3000、ページ表示中に有効",
+    "HotThresholdLabel": "過熱しきい値 (°C)",
+    "HotThresholdDesc": "この温度に達するとオレンジ色で表示",
+    "CriticalThresholdLabel": "危険しきい値 (°C)",
+    "CriticalThresholdDesc": "この温度に達すると赤色で警告表示",
+    "CompactDefaultLabel": "デフォルトでコンパクト レイアウト",
+    "CompactDefaultDesc": "リストを開いたときに補足項目を非表示（Compact）",
+    "MergeLoadLabel": "ショートカット バーで使用率を結合表示",
+    "MergeLoadDesc": "温度の後に同じハードウェアの使用率を追加して省スペース化"
+  },
+  "PinnedSensorsDockBand": {
+    "DockBandTitle": "ハードウェア測定値",
+    "NoDataSubtitle": "データがありません"
+  },
+  "SensorsListPage": {
+    "ListPageTitle": "ハードウェア モニター",
+    "ListPageAction": "開く",
+    "SearchPlaceholder": "センサーをフィルター…",
+    "StaleSuffix": " · 古い可能性があります",
+    "ViewChartName": "トレンド グラフを表示",
+    "ListFooter": "{0} 項目 · 温度 {1} · 固定済み {2} · ピーク {3}°C{4}"
+  },
+  "SensorChartPage": {
+    "ChartPageTitle": "測定値の詳細",
+    "ChartPageAction": "表示",
+    "NotFoundMarkdown": "# 測定値が見つかりません\n\n`{0}` は現在のスナップショットに存在しません。",
+    "SourceLabel": "ソース：",
+    "HardwareLabel": "ハードウェア：",
+    "GroupLabel": "グループ：",
+    "HistoryPointsLabel": "履歴ポイント：",
+    "SamplingNotice": "_サンプリング中、しばらくするとトレンドが表示されます…_",
+    "TrendHeading": "## トレンド（asciichart · コード描画）",
+    "ChartMeta": "現在 **{0}** · 単位 `{1}` · ウィンドウ約 {2} 分 · ポイント {3}/{4}",
+    "Thresholds": "しきい値：適正 {0:0}° · 過熱 {1:0}° · 危険 {2:0}°",
+    "RecentSamplesHeading": "## 最近のサンプル",
+    "TableHeaderTime": "時間",
+    "TableHeaderValue": "値"
+  },
+  "ChartRenderer": {
+    "ChartNotEnoughPoints": "サンプル不足、蓄積中…",
+    "ChartHotLabel": "過熱",
+    "ChartCritLabel": "危険",
+    "ChartRange": "現在 {0:0}{1}  ·  範囲 {2:0}–{3:0}  ·  ポイント {4}"
+  },
+  "ListCommands": {
+    "ToggleCompactName": "コンパクト レイアウトの切り替え"
+  },
+  "SensorService": {
+    "BackendInitializing": "初期化中",
+    "BackendLhmNoPawn": "LibreHardwareMonitor（PawnIO なし）",
+    "BackendLhmWithPawn": "LibreHardwareMonitor + PawnIO インストール済み",
+    "BackendLhmFailNoPawn": "LHM 開始失敗 · PawnIO なし",
+    "BackendLhmFailPawn": "LHM 開始失敗 · PawnIO インストール済み",
+    "StatusCannotRead": "センサーを読み取れません",
+    "StatusCheckPerms": "PawnIO / 管理者権限を確認してください",
+    "StatusNoData": "データがありません",
+    "StatusTitle": "ステータス",
+    "AcpiThermalZone": "ACPI サーマル ゾーン {0}",
+    "CpuPackageTemp": "CPU パッケージ温度 (Tctl)",
+    "CpuPackage": "CPU パッケージ",
+    "CpuTotalLoad": "CPU 合計負荷",
+    "CpuPackagePowerEst": "CPU パッケージ電力（推定）",
+    "CpuPower": "CPU 電力",
+    "ShortLabelHotSpot": "ホットスポット",
+    "ShortLabelTemp": "温度"
+  }
+}
